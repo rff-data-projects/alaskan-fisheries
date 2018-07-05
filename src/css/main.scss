@@ -1,0 +1,53 @@
+@import 'variables.scss';
+
+/*
+ * FLEXBOX
+ */
+
+ .flex {
+ 	display: flex;
+ 	flex-wrap: wrap;
+ }
+
+ .space-between {
+ 	justify-content: space-between;
+ }
+
+ .items-start {
+ 	align-items: flex-start;
+ }
+
+ .items-center {
+ 	align-items: center;
+ }
+
+ .grow {
+  flex-grow: 1;
+ }
+
+/*
+ *  COLUMNS
+ */
+
+#app-container * {
+  box-sizing: border-box;
+}
+
+#dev-container {
+  max-width:1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+ .layout {
+    //border: 1px solid magenta;
+ }
+
+ .main-column {
+  flex-grow:6;
+  width:600px;
+ }
+ .side-column {
+  flex-grow:1;
+  width:400px;
+ }
