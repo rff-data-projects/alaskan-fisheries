@@ -1,9 +1,14 @@
-export default function(){
+export default function(attribute){
+    console.log(attribute);
     var dropdown = document.createElement('select');
-    for ( let i = 0; i < 10; i++ ){
+    this[attribute].forEach(code => {
+        createOption.call(this, code);
+    });
+    function createOption(code){
+        console.log(attribute);
         let option = document.createElement('option');
-        option.setAttribute('value', 'option-' + i); //TO DO: set options acc to data
-        option.innerHTML = 'Option-' + i;
+        option.setAttribute('value', attribute + '-' + code); 
+        option.innerHTML = attribute === 'id' ? code : code + ': ' + this.dict[attribute][code];
         dropdown.appendChild(option);
     }
     return dropdown.outerHTML;

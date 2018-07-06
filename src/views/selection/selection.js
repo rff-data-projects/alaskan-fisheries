@@ -1,7 +1,7 @@
 import s from './styles.scss';
 import createDropdown from '../../components/dropdown.js';
 export default {
-    init(){
+    init(model){
         var div = document.createElement('div');
         div.className = 'layout';
         div.innerHTML = '<h2>Select a fishery</h2>';
@@ -9,16 +9,16 @@ export default {
         selectors.className = 'layout flex';
         selectors.innerHTML = `
             <div class="flex grow items-center layout ${s.selector}">
-                ${createDropdown('species')} <div><b> + </b></div> 
+                ${createDropdown.call(model,'species')} <div><b> + </b></div> 
             </div>
             <div class="flex grow items-center layout ${s.selector}">
-                ${createDropdown('gear')} <div><b> + </b></div> 
+                ${createDropdown.call(model,'gear')} <div><b> + </b></div> 
             </div>
             <div class="flex grow items-center layout ${s.selector}">
-                ${createDropdown('area')} 
+                ${createDropdown.call(model,'area')} 
             </div>
             <div class="flex grow items-center layout ${s.selector}">
-                <div><b>—OR— </b></div>${createDropdown('fishery')} 
+                <div><b>—OR— </b></div>${createDropdown.call(model,'id')} 
             </div>
         `;
 
