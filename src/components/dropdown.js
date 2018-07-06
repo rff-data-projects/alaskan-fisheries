@@ -1,11 +1,13 @@
 export default function(attribute){
     console.log(attribute);
     var dropdown = document.createElement('select');
+    dropdown.setAttribute('id', 'dropdown-' + attribute);
+    dropdown.setAttribute('disabled','');
     var nullOption = document.createElement('option');
     nullOption.value = '';
     nullOption.setAttribute('disabled','');
     nullOption.setAttribute('selected','');
-    nullOption.innerHTML = '— select ' + attribute + ' —';
+    nullOption.innerHTML = '— ' + attribute + ' —';
     dropdown.appendChild(nullOption);
     this[attribute].forEach(code => {
         createOption.call(this, code);
@@ -18,4 +20,4 @@ export default function(attribute){
         dropdown.appendChild(option);
     }
     return dropdown.outerHTML;
-}
+}   
