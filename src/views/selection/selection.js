@@ -7,6 +7,7 @@ export default {
         div.innerHTML = '<h2>Select a fishery</h2>';
         var selectors = document.createElement('div');
         selectors.className = 'layout flex';
+        selectors.setAttribute('id','selectors');
         selectors.innerHTML = `
             <div class="flex grow items-center layout ${s.selector}">
                 ${createDropdown.call(model,'species')} <div><b> + </b></div> 
@@ -25,5 +26,6 @@ export default {
         div.appendChild(selectors);
 
         document.querySelector('.main-column').appendChild(div);
+        return div;
     }
 }

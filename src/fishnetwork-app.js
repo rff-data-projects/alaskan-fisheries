@@ -1,3 +1,5 @@
+import { stateModule as S } from 'stateful-dead';
+import PS from 'pubsub-setter';
 import fisheries from './data/fisheries.csv';
 import species from './data/species.json';
 import gear from './data/gear.json';
@@ -7,9 +9,13 @@ var fullAPI = (function(){
   
     var controller = {
         init(){
-            console.log('init!');
+            console.log(PS);
+            PS.setSubs([
+                ['selection', this.checkDropdownOptions]
+            ]);
             this.createFishArrays();
-            selectionView.init(model);
+            var selectionDiv = selectionView.init(model);
+            this.selectionOnRender(selectionDiv);
         },
         createFishArrays(){
             ['species','gear','area', 'id'].forEach(attr => {
@@ -26,6 +32,16 @@ var fullAPI = (function(){
                 });
             });
             console.log(model);
+        },
+        selectionOnRender(div){
+            div.querySelectorAll('select').forEach(select => {
+                select.onchange = function(e){
+                    S.setState('selection', e.target.value.split('--'));
+                };
+            });
+        },
+        checkDropdownOptions(msg,data){
+            console.log(msg,data);
         }
     };
  
