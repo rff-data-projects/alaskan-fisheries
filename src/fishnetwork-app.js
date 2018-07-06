@@ -49,6 +49,9 @@ var fullAPI = (function(){
                     };
                 }
             });
+            div.querySelector('#clear-all').onclick = () => {
+                this.resetSelections();
+            };
         },
         checkDropdownOptions(msg,data){
             model.matching.fisheries = model.matching.fisheries.filter(each => { // filter the fisheries acc to selection
@@ -96,6 +99,20 @@ var fullAPI = (function(){
             attributeOrder.forEach(attr => {
                 document.getElementById('dropdown-' + attr).setAttribute('disabled','');
             });
+        },
+        resetSelections(){
+            document.querySelectorAll('#selectors select').forEach((select, i, array) => {
+                if ( i === 0 || i === array.length - 1 ){
+                    select.removeAttribute('disabled');
+                } else {
+                    select.setAttribute('disabled','');
+                }
+                select.value = '';
+                Array.from(select.options).forEach(o => {
+                    o.removeAttribute('disabled');
+                });
+            });
+            model.matching.fisheries = model.fisheries;
         }
     };
  

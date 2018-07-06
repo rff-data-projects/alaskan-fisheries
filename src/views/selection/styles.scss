@@ -5,8 +5,16 @@
         margin-right: 13px;
     }
     select  {
-        width: 113px;
+        width: 158px;
         margin-right:7px;
         flex-grow: 1;
+        &#dropdown-id {
+            max-width: 155px;
+        }
     }
+}
+.resetButton {
+    position: absolute;
+    right:14px;
+    bottom: 0;
 }

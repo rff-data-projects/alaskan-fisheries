@@ -7,7 +7,7 @@ export default function(attribute){
     nullOption.value = '';
     nullOption.setAttribute('disabled','');
     nullOption.setAttribute('selected','');
-    nullOption.innerHTML = '— ' + attribute + ' —';
+    nullOption.innerHTML = 'by ' + attribute;
     dropdown.appendChild(nullOption);
     this[attribute].forEach(code => {
         createOption.call(this, code);

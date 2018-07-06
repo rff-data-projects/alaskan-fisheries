@@ -3,7 +3,7 @@ import createDropdown from '../../components/dropdown.js';
 export default {
     init(model){
         var div = document.createElement('div');
-        div.className = 'layout';
+        div.className = 'layout relative';
         div.innerHTML = '<h2>Select a fishery</h2>';
         var selectors = document.createElement('div');
         selectors.className = 'layout flex';
@@ -24,6 +24,12 @@ export default {
         `;
 
         div.appendChild(selectors);
+
+        var reset = document.createElement('button');
+        reset.innerHTML = 'clear all';
+        reset.setAttribute('id','clear-all');
+        reset.className = `${s.resetButton} button--secondary`;
+        div.appendChild(reset);
 
         document.querySelector('.main-column').appendChild(div);
         return div;
