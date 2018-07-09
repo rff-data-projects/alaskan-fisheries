@@ -5,6 +5,7 @@ import species from './data/species.json';
 import gear from './data/gear.json';
 import area from './data/regions.json';
 import selectionView from './views/selection/selection.js';
+import mapView from  './views/map/map.js';
 var fullAPI = (function(){
     var attributeOrder = ['species','gear','area'];  
     var controller = {
@@ -17,6 +18,7 @@ var fullAPI = (function(){
             this.createFishArrays();
             var selectionDiv = selectionView.init(model);
             this.selectionOnRender(selectionDiv);
+            mapView.init();
         },
         createFishArrays(){
             [...attributeOrder, 'id'].forEach(attr => {

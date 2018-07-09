@@ -73,6 +73,15 @@ module.exports = {
                     header: true,
                     skipEmptyLines: true
                 }
+            },
+            {
+                  test: /\.(html)$/,
+                  use: {
+                    loader: 'html-loader',
+                    options: {
+                      attrs: false
+                    }
+                  }
             }
      	]
    },
