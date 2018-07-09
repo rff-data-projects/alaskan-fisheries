@@ -18,7 +18,7 @@ var fullAPI = (function(){
             this.createFishArrays();
             var selectionDiv = selectionView.init(model);
             this.selectionOnRender(selectionDiv);
-            mapView.init();
+            this.mapViewOnRender(mapView.init());
         },
         createFishArrays(){
             [...attributeOrder, 'id'].forEach(attr => {
@@ -52,7 +52,8 @@ var fullAPI = (function(){
                 }
             });
             div.querySelector('#clear-all').onclick = () => {
-                this.resetSelections();
+                //this.resetSelections();
+                S.setState('selection', null);
             };
         },
         checkDropdownOptions(msg,data){
@@ -91,9 +92,13 @@ var fullAPI = (function(){
         },
         selectFishery(msg,data){
             console.log('selection made!', msg, data);
+            if ( data === null ){
+                controller.resetSelections();
+                return;
+            }
             model.matching.fisheries = model.fisheries.filter(f => f.id === data[1]);
             attributeOrder.forEach(attr => {
-                document.getElementById('dropdown-' + attr).removeAttribute('disabled');
+                document.getElementById('dropdown-' + attr).removeAttribute('disabled');    
             });
             [...attributeOrder, 'id'].forEach(attr => {
                 document.getElementById('dropdown-' + attr).value = attr + '--' + model.matching.fisheries[0][attr];
@@ -115,6 +120,44 @@ var fullAPI = (function(){
                 });
             });
             model.matching.fisheries = model.fisheries;
+        },
+        mapViewOnRender(div){
+            div.querySelectorAll('circle').forEach(c => {
+                c.addEventListener('mouseenter', activate);
+                c.addEventListener('mouseleave', deactivate);
+                c.addEventListener('focus', activate);
+                c.addEventListener('blur', deactivate);
+            });
+            function activate(e){
+                console.log(e, this.dataset);
+                S.setState('selection',['id',this.dataset.name]);
+                /*if (e.type !== 'focus') {
+                    document.activeElement.blur();
+                } 
+                let circle = document.querySelector('circle.active');
+                console.log(circle);
+                if ( circle ) {
+                    deactivate.call(circle);
+                }
+                document.querySelectorAll('.nodes circle').forEach(function(each){
+                    each.classList.add('not-active');
+                });
+                this.classList.remove('not-active');
+                this.classList.add('active');
+                showLinks(this.dataset);
+                showDetails(this.dataset);*/
+            }
+
+            function deactivate(e){
+                console.log(e, this.dataset);
+                S.setState('selection', null);
+                /*document.querySelectorAll('.nodes circle').forEach(function(each){
+                    each.classList.remove('not-active');
+                });
+                this.classList.remove('active');
+                hideLinks(this.dataset);
+                hideDetails();*/
+            }
         }
     };
  

@@ -8,5 +8,7 @@ export default {
         div.innerHTML = map;
 
         document.querySelector('.main-column').appendChild(div);
+
+        return div;
     }
 }
