@@ -13,7 +13,9 @@ var fullAPI = (function(){
             console.log(PS);
             PS.setSubs([
                 ['partialSelection', this.checkDropdownOptions],
-                ['selection', this.selectFishery]
+                ['selection', this.selectFishery],
+                ['selection', this.highlightNodes],
+                ['preview', this.highlightNodes]
             ]);
             this.createFishArrays();
             var selectionDiv = selectionView.init(model);
@@ -130,7 +132,7 @@ var fullAPI = (function(){
             });
             function activate(e){
                 console.log(e, this.dataset);
-                S.setState('selection',['id',this.dataset.name]);
+                S.setState('preview',['id',this.dataset.name]);
                 /*if (e.type !== 'focus') {
                     document.activeElement.blur();
                 } 
@@ -150,13 +152,53 @@ var fullAPI = (function(){
 
             function deactivate(e){
                 console.log(e, this.dataset);
-                S.setState('selection', null);
+                S.setState('preview', null);
                 /*document.querySelectorAll('.nodes circle').forEach(function(each){
                     each.classList.remove('not-active');
                 });
                 this.classList.remove('active');
                 hideLinks(this.dataset);
                 hideDetails();*/
+            }
+        },
+        highlightNodes(msg,data){
+            console.log(msg,data);
+            
+            var svg = document.querySelector('.map-container svg');
+            svg.querySelectorAll('.nodes circle').forEach(function(each){
+                each.classList.add('not-active');
+                each.classList.remove('active');
+            });
+            if ( data !== null ){
+                let active = svg.querySelector(`.nodes circle[data-name=${data[1]}]`);
+                active.classList.remove('not-active');
+                active.classList.add('active');
+                highlightLinkedNodes(active.dataset);
+            } else {
+                unhighlightLinkedNodes();
+            }
+            function highlightLinkedNodes(d){
+                svg.querySelectorAll('line.' + d.name).forEach(l => {
+                    l.classList.add('active');
+                    var attachedNodes = l.className.baseVal.match(/[A-Z]+-.*?-[^ ]/g);
+                    attachedNodes.forEach(ndId => {
+                        if ( ndId !== d.name ){
+                            let nd = svg.querySelector('circle[data-name="' + ndId + '"]');
+                            if ( nd ) {
+                                nd.classList.remove('not-active');
+                                nd.classList.add('attached');
+                            }
+                        }
+                    });
+                });
+            }
+            function unhighlightLinkedNodes(){
+                svg.querySelectorAll('line.active').forEach(l => {
+                    l.classList.remove('active');
+                });
+                svg.querySelectorAll('circle.attached').forEach(c => {
+                    c.classList.remove('attached');
+                });
             }
         }
     };
