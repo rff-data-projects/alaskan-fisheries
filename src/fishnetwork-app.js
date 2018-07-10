@@ -199,13 +199,15 @@ var fullAPI = (function(){
                 each.classList.remove('active');
                 each.classList.remove('attached');
             });
+            unhighlightLinkedNodes();
             if ( data !== null ){
+                svg.classList.add('activated')
                 let active = svg.querySelector(`.nodes circle[data-name=${data[1]}]`);
                 active.classList.remove('not-active');
                 active.classList.add('active');
                 highlightLinkedNodes(active.dataset);
             } else {
-                unhighlightLinkedNodes();
+                svg.classList.remove('activated')
             }
             function highlightLinkedNodes(d){
                 svg.querySelectorAll('line.' + d.name).forEach(l => {
