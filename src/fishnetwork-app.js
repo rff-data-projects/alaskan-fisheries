@@ -129,10 +129,37 @@ var fullAPI = (function(){
                 c.addEventListener('mouseleave', deactivate);
                 c.addEventListener('focus', activate);
                 c.addEventListener('blur', deactivate);
+                c.addEventListener('click', function(e){
+                    e.stopPropagation();
+                    clickEnterHandler.call(this);
+                });
+                c.addEventListener('keyup', function(e){
+                    e.stopPropagation();
+                    if (e.keyCode === 13) {
+                        clickEnterHandler.call(this);
+                    }
+                });
             });
+            function clickEnterHandler(){
+                var currentSelection = S.getState('selection');
+                if ( currentSelection && currentSelection[1] === this.dataset.name){ // is same node
+                    S.setState('selection', null);
+                    div.removeEventListener('click', mapClickHandler); // div = .map-container
+                } else {
+                    S.setState('selection', ['id',this.dataset.name]);
+                    div.addEventListener('click', mapClickHandler);
+
+                }
+            }
+            function mapClickHandler(){
+                S.setState('selection', null);
+                div.removeEventListener('click', mapClickHandler);
+            }
             function activate(e){
-                console.log(e, this.dataset);
-                S.setState('preview',['id',this.dataset.name]);
+                e.stopPropagation();
+                if (!S.getState('selection')) { // only allow mouseover  preview / depreview if nothing is selected
+                    S.setState('preview',['id',this.dataset.name]);
+                }
                 /*if (e.type !== 'focus') {
                     document.activeElement.blur();
                 } 
@@ -151,8 +178,10 @@ var fullAPI = (function(){
             }
 
             function deactivate(e){
-                console.log(e, this.dataset);
-                S.setState('preview', null);
+                e.stopPropagation();
+                if (!S.getState('selection')) { // only allow mouseover  preview / depreview if nothing is selected
+                    S.setState('preview', null);
+                }
                 /*document.querySelectorAll('.nodes circle').forEach(function(each){
                     each.classList.remove('not-active');
                 });
@@ -168,6 +197,7 @@ var fullAPI = (function(){
             svg.querySelectorAll('.nodes circle').forEach(function(each){
                 each.classList.add('not-active');
                 each.classList.remove('active');
+                each.classList.remove('attached');
             });
             if ( data !== null ){
                 let active = svg.querySelector(`.nodes circle[data-name=${data[1]}]`);
