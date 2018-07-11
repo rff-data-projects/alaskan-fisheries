@@ -9,16 +9,19 @@
     .links line:not(.active){
       display:none;
     }
+    .nodes circle:not(.active):not(.attached){
+      opacity:0;
+    }
   }
 
   .links line {
-   
+    
     mix-blend-mode: hard-light;
     opacity: 0.30;
     &.below-threshold {
-      display: none;
+      display:none;
       &.active {
-        display: initial;
+        display:initial;
       }
     }
     &.active {
@@ -51,6 +54,7 @@
   }
 
   .nodes circle {
+    transition: opacity 0.2s linear;
     stroke: #fff;
     stroke-width: 0.1px;
     &:focus {

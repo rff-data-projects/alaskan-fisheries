@@ -7,6 +7,7 @@
 "J":"Westward",
 "L":"Chignik",
 "M":"Alaska Peninsula",
+"N":"Nelson Island",
 "P":"Upper Yukon",
 "Q":"Bering Sea",
 "T":"Bristol Bay",
@@ -33,6 +34,7 @@
 "QD":"Bering Sea CDQCVRF",
 "QE":"Bering Sea CDQNSEDC",
 "QF":"Bering Sea CDQYDFDA",
+"QV":"Bering Sea / Vessel permit",
 "TA":"Bristol Bay CDQAPICDA",
 "TB":"Bristol Bay CDQBBEDC",
 "TC":"Bristol Bay CDQCBSFA",
@@ -59,5 +61,6 @@
 "AFW":"Federal waters",
 "ASW":"State waters",
 "BFW":"Federal waters",
-"BSW":"State waters"
+"BSW":"State waters",
+"BV":"Statewide/Vessel permit"
 }
