@@ -1,0 +1,7 @@
+{
+    "permits":"Permit holders",
+    "degree":"Degree",
+    "degree_weighted":"Weight",
+    "avg_edge_weight":"Edge weight",
+    "closeness_centrality":"Centrality"
+}

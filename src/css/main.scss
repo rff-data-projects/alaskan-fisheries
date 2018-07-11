@@ -46,10 +46,16 @@
  .main-column {
   flex-grow:6;
   width:600px;
+  margin-right:20px;
+  h2 {
+    transition: opacity 0.5s linear;
+    opacity: 1;
+  }
  }
  .side-column {
   flex-grow:1;
   width:400px;
+  padding-top: 43px;
  }
 
  /*

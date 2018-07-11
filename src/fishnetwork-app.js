@@ -1,13 +1,32 @@
 import { stateModule as S } from 'stateful-dead';
 import PS from 'pubsub-setter';
-import fisheries from './data/fisheries.csv';
+import fisheries from './data/fisheries-sorted.csv';
 import species from './data/species.json';
 import gear from './data/gear.json';
 import area from './data/regions.json';
+import fields from './data/fields.json';
 import selectionView from './views/selection/selection.js';
 import mapView from  './views/map/map.js';
+import sidebarView from  './views/sidebar/sidebar.js';
 var fullAPI = (function(){
     var attributeOrder = ['species','gear','area'];  
+    var sidebars = [
+        {
+            name: 'Fishery details',
+            data: 'fisheries',
+            fields: ['permits','degree_weighted','closeness_centrality','avg_edge_weight','degree']
+        },
+        {
+            name: 'Cluster details',
+            data: 'clusters',
+            fields: ['permits','degree_weighted','closeness_centrality','avg_edge_weight','degree'] // TO CHANGE
+        },
+        {
+            name: 'Network details',
+            data: 'network',
+            fields: ['permits','degree_weighted','closeness_centrality','avg_edge_weight','degree'] // TO CHANGE
+        }
+    ];
     var controller = {
         init(){
             console.log(PS);
@@ -15,12 +34,18 @@ var fullAPI = (function(){
                 ['partialSelection', this.checkDropdownOptions],
                 ['selection', this.selectFishery],
                 ['selection', this.highlightNodes],
+                ['selection', this.setMainLabel],
                 ['preview', this.highlightNodes]
+
             ]);
+            console.log(fisheries);
             this.createFishArrays();
             var selectionDiv = selectionView.init(model);
             this.selectionOnRender(selectionDiv);
             this.mapViewOnRender(mapView.init());
+            sidebars.forEach(sidebar => {
+                sidebarView.init.call(model,sidebar);
+            });
         },
         createFishArrays(){
             [...attributeOrder, 'id'].forEach(attr => {
@@ -30,11 +55,20 @@ var fullAPI = (function(){
                         model[attr].push(each[attr]);
                     }
                 });
-                model[attr].sort((a,b) => {
-                    if ( a < b ) return -1;
-                    if ( a > b ) return 1;
-                    return 0;
-                });
+                if ( attr !== 'id' ){
+                    model[attr].sort((a,b) => {
+                        if ( isNaN(parseInt(a)) && isNaN(parseInt(b))){
+                            if ( a < b ) return -1;
+                            if ( a > b ) return 1;
+                            return 0;
+                        } else {
+                            if ( parseInt(a) < parseInt(b) ) return -1;
+                            if ( parseInt(a) > parseInt(b) ) return 1;
+                            return 0;
+                        }
+                    });
+                }
+              //  model[attr].sort((a,b) => d3.ascending(a,b));
             });
             console.log(model);
         },
@@ -65,7 +99,7 @@ var fullAPI = (function(){
                 return each[data[0]] === value;
             });
             attributeOrder.forEach(attr => { // create array for each attribute consisting only of available values
-                console.log(attr);
+                
                 model.matching[attr] = [];
                 model.matching.fisheries.forEach(each => {
                     if ( model.matching[attr].indexOf(each[attr]) === -1 ){
@@ -233,6 +267,31 @@ var fullAPI = (function(){
                     c.classList.remove('attached');
                 });
             }
+        },
+        setMainLabel(msg,data){
+            console.log(msg,data);
+            var el = document.querySelector('.main-column h2');
+            var text;
+            if ( data !== null ){
+                text = data[1].split('-').reduce((acc, cur, i) => {
+                    console.log(acc, cur, attributeOrder[i],model.dict[attributeOrder[i]][cur]);
+                    return i === 0 ? model.dict[attributeOrder[i]][cur] : acc + ' — ' + model.dict[attributeOrder[i]][cur];
+                },'') + ' (' + data[1] + ')';
+            } else {
+                text = 'Select a fishery';
+            }
+            controller.fadeInText(el, text);
+        },
+        fadeInText(el,text){
+            var durationStr = window.getComputedStyle(el).getPropertyValue('transition-duration');
+            var duration = parseFloat(durationStr) * 1000;
+            console.log(duration);
+            el.style.opacity = 0;
+            setTimeout(() => {
+                el.innerHTML = text;
+                el.style.opacity = 1;
+            }, duration);
+
         }
     };
  
@@ -241,7 +300,8 @@ var fullAPI = (function(){
         dict: {
             species,
             gear,
-            area
+            area,
+            fields
         },
         matching: {
             fisheries
