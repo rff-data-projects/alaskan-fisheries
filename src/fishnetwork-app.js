@@ -212,7 +212,8 @@ var fullAPI = (function(){
             function highlightLinkedNodes(d){
                 svg.querySelectorAll('line.' + d.name).forEach(l => {
                     l.classList.add('active');
-                    var attachedNodes = l.className.baseVal.match(/[A-Z]+-.*?-[^ ]/g);
+                    var attachedNodes = l.className.baseVal.match(/[A-Z]+-.*?-[^ ]+/g); // returns array of the two ids part of the line's classname
+                    console.log(attachedNodes);
                     attachedNodes.forEach(ndId => {
                         if ( ndId !== d.name ){
                             let nd = svg.querySelector('circle[data-name="' + ndId + '"]');
