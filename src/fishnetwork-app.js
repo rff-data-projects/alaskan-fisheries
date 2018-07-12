@@ -1,3 +1,4 @@
+/* globals d3 */
 import { stateModule as S } from 'stateful-dead';
 import PS from 'pubsub-setter';
 import fisheries from './data/fisheries-sorted.csv';
@@ -13,17 +14,20 @@ var fullAPI = (function(){
     var sidebars = [
         {
             name: 'Fishery details',
-            data: 'fisheries',
+            id: 'fisheries',
+            data: fisheries,
             fields: ['permits','degree_weighted','closeness_centrality','avg_edge_weight','degree']
         },
         {
             name: 'Cluster details',
-            data: 'clusters',
+            id: 'clusters',
+            data: fisheries,
             fields: ['permits','degree_weighted','closeness_centrality','avg_edge_weight','degree'] // TO CHANGE
         },
         {
             name: 'Network details',
-            data: 'network',
+            id: 'network',
+            data: fisheries,
             fields: ['permits','degree_weighted','closeness_centrality','avg_edge_weight','degree'] // TO CHANGE
         }
     ];
@@ -35,7 +39,9 @@ var fullAPI = (function(){
                 ['selection', this.selectFishery],
                 ['selection', this.highlightNodes],
                 ['selection', this.setMainLabel],
-                ['preview', this.highlightNodes]
+                ['preview', this.highlightNodes],
+                ['preview', this.updateSidebars],
+                ['selection', this.updateSidebars]
 
             ]);
             console.log(fisheries);
@@ -292,6 +298,27 @@ var fullAPI = (function(){
                 el.style.opacity = 1;
             }, duration);
 
+        },
+        updateSidebars(msg,data){ // TO DO: GIVE SCOPE TO THE S DOT STYLE DEFINITIONS
+            if ( data !== null ){
+                sidebars.forEach(sb => {
+                    var div = document.querySelector(`#${sb.id}-details`);
+                    div.classList.remove('notApplicable');
+                    console.log(`#${sb.id}-details`);
+                    sb.fields.forEach(field =>{
+                        var valueSpan = div.querySelector(`.field-${field} .field-value`);
+                        controller.fadeInText(valueSpan, d3.format(',')(sb.data.find(f => f.id === data[1])[field]));
+                    });
+                });
+            } else {
+                sidebars.forEach(sb => {
+                    var div = document.querySelector(`#${sb.id}-details`);
+                    div.classList.add('notApplicable');
+                });
+                document.querySelectorAll('span.field-value').forEach(span => {
+                    controller.fadeInText(span, 'n.a.');
+                });
+            }
         }
     };
  
