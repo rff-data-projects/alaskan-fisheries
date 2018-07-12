@@ -297,10 +297,10 @@ var fullAPI = (function(){
             var durationStr = window.getComputedStyle(el).getPropertyValue('transition-duration');
             var duration = parseFloat(durationStr) * 1000;
             console.log(duration);
-            el.style.opacity = 0;
+            el.classList.add('no-opacity');
             setTimeout(() => {
                 el.innerHTML = text;
-                el.style.opacity = 1;
+                el.classList.remove('no-opacity');
             }, duration);
 
         },

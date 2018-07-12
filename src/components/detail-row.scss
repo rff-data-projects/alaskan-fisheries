@@ -1,12 +1,11 @@
 .chartDiv {
   width: 200px;
   flex-grow: 1;
-  max-width: 250px;
+  max-width: 200px;
   border: 1px solid magenta;
 
 }
 
 .field-value {
-    opacity: 1;
     transition: opacity 0.5s linear;
 }

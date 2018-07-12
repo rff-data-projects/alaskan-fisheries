@@ -49,7 +49,6 @@
   margin-right:20px;
   h2 {
     transition: opacity 0.5s linear;
-    opacity: 1;
   }
  }
  .side-column {
@@ -64,4 +63,8 @@
 
   .relative {
     position: relative;
+  }
+
+  .no-opacity {
+    opacity: 0;
   }
