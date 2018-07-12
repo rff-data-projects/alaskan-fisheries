@@ -18,6 +18,9 @@
     mix-blend-mode: hard-light;
     opacity: 0.30;
     transition: opacity 0.2s linear;
+    &.statewide {
+      opacity: 0;
+    }
     &.below-threshold {
       display:none;
       &.active {
