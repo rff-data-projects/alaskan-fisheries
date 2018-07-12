@@ -2,6 +2,8 @@
 import { stateModule as S } from 'stateful-dead';
 import PS from 'pubsub-setter';
 import fisheries from './data/fisheries-sorted.csv';
+import clusters from './data/clusters.csv';
+import network from './data/network.csv';
 import species from './data/species.json';
 import gear from './data/gear.json';
 import area from './data/regions.json';
@@ -9,6 +11,9 @@ import fields from './data/fields.json';
 import selectionView from './views/selection/selection.js';
 import mapView from  './views/map/map.js';
 import sidebarView from  './views/sidebar/sidebar.js';
+
+console.log(clusters);
+
 var fullAPI = (function(){
     var attributeOrder = ['species','gear','area'];  
     var sidebars = [
@@ -16,19 +21,19 @@ var fullAPI = (function(){
             name: 'Fishery details',
             id: 'fisheries',
             data: fisheries,
-            fields: ['permits','degree_weighted','closeness_centrality','avg_edge_weight','degree']
+            fields: ['permits','degree','closeness_centrality','avg_edge_weight']
         },
         {
             name: 'Cluster details',
             id: 'clusters',
-            data: fisheries,
-            fields: ['permits','degree_weighted','closeness_centrality','avg_edge_weight','degree'] // TO CHANGE
+            data: clusters,
+            fields: ['fisheries','avg_permits','density','avg_degree', 'avg_edge_weight', 'avg_closeness_centrality'] 
         },
         {
             name: 'Network details',
             id: 'network',
-            data: fisheries,
-            fields: ['permits','degree_weighted','closeness_centrality','avg_edge_weight','degree'] // TO CHANGE
+            data: network,
+            fields: ['fisheries','avg_permits','density','avg_degree', 'avg_edge_weight', 'avg_closeness_centrality'] 
         }
     ];
     var controller = {
@@ -307,7 +312,10 @@ var fullAPI = (function(){
                     console.log(`#${sb.id}-details`);
                     sb.fields.forEach(field =>{
                         var valueSpan = div.querySelector(`.field-${field} .field-value`);
-                        controller.fadeInText(valueSpan, d3.format(',')(sb.data.find(f => f.id === data[1])[field]));
+                        console.log('cluster', model.fisheries.find(f => f.id === data[1]).cluster);
+                        // specify matching criteria for the different sidebars; node sidebar: id matches id; cluster: id matches cluster of fishery matching id: network: doesn't change fn retur true always
+                        var matchFn = sb.id === 'fisheries' ? x => x.id === data[1] : sb.id === 'clusters' ? x => x.cluster === model.fisheries.find(f => f.id === data[1]).cluster : () => true;
+                        controller.fadeInText(valueSpan, d3.format(',')(sb.data.find(matchFn)[field]));
                     });
                 });
             } else {

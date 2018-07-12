@@ -1,7 +1,11 @@
 {
-    "permits":"Permit holders",
+    "permits":"Average no. permits",
     "degree":"Degree",
-    "degree_weighted":"Weight",
-    "avg_edge_weight":"Edge weight",
-    "closeness_centrality":"Centrality"
+    "avg_edge_weight":"Average edge weight",
+    "closeness_centrality":"Closeness centrality",
+    "fisheries":"No. of fisheries",
+    "density": "Density",
+    "avg_degree": "Average degree",
+    "avg_closeness_centrality": "Average closeness centrality",
+    "avg_permits":"Avg no. permits / fishery "
 }
