@@ -4,11 +4,12 @@ export default { // called with `this` = model
     init(sidebar){
         console.log(sidebar);
         var div = document.createElement('div');
-        div.className = s.sidebarDiv;
-        div.innerHTML = `<h3>${sidebar.name}</h3><h4></h4>`
+        div.className = s.sidebarDiv + ' ' + sidebar.id;
+        div.innerHTML = `<h3>${sidebar.name}</h3>`
         var container = document.createElement('div');
         container.id = `${sidebar.id}-details`;
         container.className = s.notApplicable;
+        container.innerHTML = '<h4></h4>';
         sidebar.fields.forEach(field => {
             container.appendChild(createDetailRow.call(this,field, ( sidebar.id !== 'network' )));
         });

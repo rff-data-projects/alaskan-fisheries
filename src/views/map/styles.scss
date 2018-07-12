@@ -15,9 +15,9 @@
   }
 
   .links line {
-    
     mix-blend-mode: hard-light;
     opacity: 0.30;
+    transition: opacity 0.2s linear;
     &.below-threshold {
       display:none;
       &.active {
@@ -50,10 +50,18 @@
     }
     &.no-cluster {
       stroke: #5a5a5a;
+      transition: 400ms;
+    }
+
+    @for $i from 1 through 7 {
+      &.cluster-#{$i} {
+        transition-delay: #{$i * 50}ms;
+      }
     }
   }
 
   .nodes circle {
+
     transition: opacity 0.2s linear;
     stroke: #fff;
     stroke-width: 0.1px;
@@ -117,6 +125,11 @@
         fill: lighten(#005fa9, 10%);
       }
 
+    }
+    @for $i from 1 through 7 {
+      &.cluster-#{$i} {
+        transition-delay: #{12 + $i * 25}ms;
+      }
     }
 
   }

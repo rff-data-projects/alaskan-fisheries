@@ -57,6 +57,7 @@ var fullAPI = (function(){
             sidebars.forEach(sidebar => {
                 sidebarView.init.call(model,sidebar);
             });
+            this.setNetworkDetails();
         },
         createFishArrays(){
             [...attributeOrder, 'id'].forEach(attr => {
@@ -169,6 +170,8 @@ var fullAPI = (function(){
             model.matching.fisheries = model.fisheries;
         },
         mapViewOnRender(div){
+
+
             div.querySelectorAll('circle').forEach(c => {
                 c.addEventListener('mouseenter', activate);
                 c.addEventListener('mouseleave', deactivate);
@@ -202,6 +205,7 @@ var fullAPI = (function(){
             }
             function activate(e){
                 e.stopPropagation();
+                clearTimeout(timeout);
                 if (!S.getState('selection')) { // only allow mouseover  preview / depreview if nothing is selected
                     S.setState('preview',['id',this.dataset.name]);
                 }
@@ -221,12 +225,14 @@ var fullAPI = (function(){
                 showLinks(this.dataset);
                 showDetails(this.dataset);*/
             }
-
+            var timeout;
             function deactivate(e){
                 e.stopPropagation();
-                if (!S.getState('selection')) { // only allow mouseover  preview / depreview if nothing is selected
-                    S.setState('preview', null);
-                }
+                timeout = setTimeout(() => {
+                    if (!S.getState('selection')) { // only allow mouseover  preview / depreview if nothing is selected
+                        S.setState('preview', null);
+                    }
+                }, 200);
                 /*document.querySelectorAll('.nodes circle').forEach(function(each){
                     each.classList.remove('not-active');
                 });
@@ -306,27 +312,48 @@ var fullAPI = (function(){
         },
         updateSidebars(msg,data){ // TO DO: GIVE SCOPE TO THE S DOT STYLE DEFINITIONS
             if ( data !== null ){
+                var index = 0;
                 sidebars.forEach(sb => {
-                    var div = document.querySelector(`#${sb.id}-details`);
-                    div.classList.remove('notApplicable');
-                    console.log(`#${sb.id}-details`);
-                    sb.fields.forEach(field =>{
-                        var valueSpan = div.querySelector(`.field-${field} .field-value`);
-                        console.log('cluster', model.fisheries.find(f => f.id === data[1]).cluster);
-                        // specify matching criteria for the different sidebars; node sidebar: id matches id; cluster: id matches cluster of fishery matching id: network: doesn't change fn retur true always
+                    if (sb.id !== 'network'){ // network stats don't change
+                        var div = document.querySelector(`#${sb.id}-details`);
                         var matchFn = sb.id === 'fisheries' ? x => x.id === data[1] : sb.id === 'clusters' ? x => x.cluster === model.fisheries.find(f => f.id === data[1]).cluster : () => true;
-                        controller.fadeInText(valueSpan, d3.format(',')(sb.data.find(matchFn)[field]));
-                    });
+                        var titleField = sb.id === 'fisheries' ? 'id' : 'cluster';
+                        div.classList.remove('notApplicable');
+                        var titleText = ( sb.id === 'clusters' ? 'Cluster ' : '') + model.fisheries.find(f => f.id === data[1])[titleField];
+                        controller.fadeInText(div.querySelector('h4'), titleText);
+                        sb.fields.forEach(field => {
+                            index++;
+                            var valueSpan = div.querySelector(`.field-${field} .field-value`);
+                            // specify matching criteria for the different sidebars; node sidebar: id matches id; cluster: id matches cluster of fishery matching id: network: doesn't change fn retur true always
+                            setTimeout(() => {
+                                controller.fadeInText(valueSpan, d3.format(',')(sb.data.find(matchFn)[field]));
+                            },index * 25 + 6);
+                        });
+                    }
                 });
             } else {
                 sidebars.forEach(sb => {
-                    var div = document.querySelector(`#${sb.id}-details`);
-                    div.classList.add('notApplicable');
-                });
-                document.querySelectorAll('span.field-value').forEach(span => {
-                    controller.fadeInText(span, 'n.a.');
+                    if (sb.id !== 'network'){
+                        var div = document.querySelector(`#${sb.id}-details`);
+                        div.classList.add('notApplicable');
+                        div.querySelectorAll('span.field-value').forEach(span => {
+                            controller.fadeInText(span, 'n.a.');
+                        });
+                        controller.fadeInText(div.querySelector('h4'), '');
+                    }
                 });
             }
+        },
+        setNetworkDetails(){
+            var div = document.querySelector('#network-details');
+            div.classList.remove('notApplicable');
+            sidebars.find(sb => sb.id === 'network').fields.forEach((field,i) => {
+                var valueSpan = div.querySelector(`.field-${field} .field-value`);
+                console.log(network);
+                setTimeout(() => {
+                    controller.fadeInText(valueSpan, d3.format(',')(network[0][field]));
+                },i * 25);
+            });
         }
     };
  

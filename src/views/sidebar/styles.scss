@@ -1,6 +1,13 @@
 .sidebarDiv {
+    h3 {
+        margin-bottom: 0;
+    }
     h4 {
         margin-top:0;
+        font-size:0.8em;
+        min-height:17px;
+        transition: opacity 0.25s linear;
+
     }
     .notApplicable {
         span.field-value {
