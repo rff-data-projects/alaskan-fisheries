@@ -2,6 +2,7 @@ import s from './styles.scss';
 import createDropdown from '../../components/dropdown.js';
 export default {
     init(model){
+        console.log(s);
         var div = document.createElement('div');
         div.className = 'layout relative';
         div.innerHTML = '<h2>Select a fishery</h2>';
