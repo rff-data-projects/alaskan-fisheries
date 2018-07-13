@@ -1,0 +1,11 @@
+@import '../css/_variables.scss';
+.background {
+    fill: #BCBEC0;
+}
+.foreground {
+    fill: $blue
+}
+.hashmark {
+    fill: $dark_gray;
+    opacity: 0.2;
+}

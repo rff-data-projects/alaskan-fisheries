@@ -11,7 +11,7 @@ export default { // called with `this` = model
         container.className = s.notApplicable;
         container.innerHTML = '<h4></h4>';
         sidebar.fields.forEach(field => {
-            container.appendChild(createDetailRow.call(this,field, ( sidebar.id !== 'network' )));
+            container.appendChild(createDetailRow.call(this, sidebar, field));
         });
 
         div.appendChild(container);

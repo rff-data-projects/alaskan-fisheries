@@ -21,13 +21,15 @@ var fullAPI = (function(){
             name: 'Fishery details',
             id: 'fisheries',
             data: fisheries,
-            fields: ['permits','degree','closeness_centrality','avg_edge_weight']
+            fields: ['permits','degree','closeness_centrality','avg_edge_weight'],
+            charts: []
         },
         {
             name: 'Cluster details',
             id: 'clusters',
             data: clusters,
-            fields: ['fisheries','avg_permits','density','avg_degree', 'avg_edge_weight', 'avg_closeness_centrality'] 
+            fields: ['fisheries','avg_permits','density','avg_degree', 'avg_edge_weight', 'avg_closeness_centrality'],
+            charts: [] 
         },
         {
             name: 'Network details',
@@ -316,7 +318,7 @@ var fullAPI = (function(){
                 sidebars.forEach(sb => {
                     if (sb.id !== 'network'){ // network stats don't change
                         var div = document.querySelector(`#${sb.id}-details`);
-                        var matchFn = sb.id === 'fisheries' ? x => x.id === data[1] : sb.id === 'clusters' ? x => x.cluster === model.fisheries.find(f => f.id === data[1]).cluster : () => true;
+                        var matchFn = sb.id === 'fisheries' ? x => x.id === data[1] : sb.id === 'clusters' ? x => x.id === model.fisheries.find(f => f.id === data[1]).cluster : () => true;
                         var titleField = sb.id === 'fisheries' ? 'id' : 'cluster';
                         div.classList.remove('notApplicable');
                         var titleText = ( sb.id === 'clusters' ? 'Cluster ' : '') + model.fisheries.find(f => f.id === data[1])[titleField];
@@ -343,6 +345,17 @@ var fullAPI = (function(){
                     }
                 });
             }
+            controller.updateCharts(data);
+        },
+        updateCharts(data){
+            sidebars.forEach(sidebar => {
+                if ( sidebar.charts ){
+                    sidebar.charts.forEach(chart => {
+                        var param = data !== null ? ( chart.sidebarID === 'fisheries' ? data[1] : model.fisheries.find(f => f.id === data[1]).cluster ) : 'reset'; // for fishery charts pass in fishery id; for cluster charts pass in cluster if matching fishery
+                        chart.update(param);
+                    });
+                }
+            });
         },
         setNetworkDetails(){
             var div = document.querySelector('#network-details');
