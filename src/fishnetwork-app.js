@@ -11,6 +11,7 @@ import fields from './data/fields.json';
 import selectionView from './views/selection/selection.js';
 import mapView from  './views/map/map.js';
 import sidebarView from  './views/sidebar/sidebar.js';
+import listView from './views/lists/lists.js';
 
 console.log(clusters);
 
@@ -60,6 +61,7 @@ var fullAPI = (function(){
                 sidebarView.init.call(model,sidebar);
             });
             this.setNetworkDetails();
+            listView.init();
         },
         createFishArrays(){
             [...attributeOrder, 'id'].forEach(attr => {
