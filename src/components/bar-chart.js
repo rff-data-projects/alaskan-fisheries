@@ -14,11 +14,12 @@ export default function Barchart(container, sidebar, field){
         avg_closeness_centrality: 'log'
     };
     this.scaleType = scaleTypes[field] === 'log' ? d3.scaleLog() : d3.scaleLinear();
+    this.scaleTypeStr = scaleTypes[field];
     this.container = container;
     this.field = field;
     this.sidebarID = sidebar.id;
     this.data = sidebar.data;
-    this.height = 9; // value for svg height in proportion to width = 100
+    this.height = 12.5; // value for svg height in proportion to width = 100
     this.minDomain = scaleTypes[this.field] === 'log' ? d3.min(this.data, d => {
             if ( d[this.field] !== 0 ){
                 return d[this.field];
@@ -50,23 +51,26 @@ Barchart.prototype = {
             .attr('id',`${this.sidebarID}-${this.field}-svgDesc`)
             .text(`Bar chart segment representing the ${this.field} value for the selected ${this.sidebarID}`);
 
-        this.background = svg.append('rect')
+        var barGroup = svg.append('g')
+            .attr('transform', 'translate(0,' + this.height / 3 + ')');
+
+        this.background = barGroup.append('rect')
             .attr('width', 100)
-            .attr('height', this.height / 2)
+            .attr('height', this.height / 3)
             .attr('class',s.background);
 
-        this.foreground = svg.append('rect')
+        this.foreground = barGroup.append('rect')
             .attr('width', 0)
-            .attr('height', this.height / 2)
+            .attr('height', this.height / 3)
             .attr('class',s.foreground);
 
-        this.hashmarks = svg.selectAll('rect.' + s.hashmark)
+        this.hashmarks = barGroup.selectAll('rect.' + s.hashmark)
             .data(this.data.filter(d => !isNaN(d[this.field])))
             .enter().append('rect')
             .attr('class', s.hashmark)
             .attr('width', 0.5)
-            .attr('height', this.height / 3)
-            .attr('y', this.height / 2)
+            .attr('height', this.height / 4)
+            .attr('y', this.height / 3)
             .attr('x', d => {
                 if ( isNaN(this.scale(d[this.field])) || this.scale(d[this.field]) === -Infinity ) {
                     return 0;
@@ -77,6 +81,14 @@ Barchart.prototype = {
                     //return 0;
                 }
             });
+
+        if ( this.scaleTypeStr === 'log' ){
+            svg.append('text')
+                .attr('class', s.scaleType)
+                .attr('x', 100)
+                .attr('y', 3.5)
+                .text('log scale');
+        }
     },
     update(id){
         if ( id !== 'reset' ){

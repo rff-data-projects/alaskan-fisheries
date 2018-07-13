@@ -7,12 +7,12 @@ export default {
         var div = document.createElement('div');
         div.className = 'map-container';
         div.innerHTML = map;
-        document.querySelector('.main-column').appendChild(div);
 
         var legendDiv = document.createElement('div');
         legendDiv.className = 'legend-container';
         legendDiv.innerHTML = legend;
-        document.querySelector('.main-column').appendChild(legendDiv);
+        div.appendChild(legendDiv);
+        document.querySelector('.main-column').appendChild(div);
 
         return div;
     }

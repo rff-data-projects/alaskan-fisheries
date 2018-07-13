@@ -326,9 +326,10 @@ var fullAPI = (function(){
                         sb.fields.forEach(field => {
                             index++;
                             var valueSpan = div.querySelector(`.field-${field} .field-value`);
+                            var value = !isNaN(sb.data.find(matchFn)[field]) ? d3.format(',')(sb.data.find(matchFn)[field]) : 'n.a.';
                             // specify matching criteria for the different sidebars; node sidebar: id matches id; cluster: id matches cluster of fishery matching id: network: doesn't change fn retur true always
                             setTimeout(() => {
-                                controller.fadeInText(valueSpan, d3.format(',')(sb.data.find(matchFn)[field]));
+                                controller.fadeInText(valueSpan, value);
                             },index * 25 + 6);
                         });
                     }
