@@ -11,7 +11,7 @@ import fields from './data/fields.json';
 import selectionView from './views/selection/selection.js';
 import mapView from  './views/map/map.js';
 import sidebarView from  './views/sidebar/sidebar.js';
-import listView from './views/lists/lists.js';
+import listContainer from './views/lists/lists.js';
 import sidebarStyles from './views/sidebar/styles.scss'; // should be unnecessary after refactor to constructor pattern
 console.log(clusters);
 
@@ -49,8 +49,8 @@ var fullAPI = (function(){
                 ['selection', this.setMainLabel],
                 ['preview', this.highlightNodes],
                 ['preview', this.updateSidebars],
-                ['selection', this.updateSidebars]
-
+                ['selection', this.updateSidebars],
+                ['selection', this.updateLists]
             ]);
             console.log(fisheries);
             this.createFishArrays();
@@ -61,7 +61,12 @@ var fullAPI = (function(){
                 sidebarView.init.call(model,sidebar);
             });
             this.setNetworkDetails();
-            listView.init();
+            views.listContainer = new listContainer([{title:'most connected'},{title:'least connected'}]);
+        },
+        updateLists(msg,data){
+            views.listContainer.children.forEach(list => {
+                list.update(msg,data,controller.fadeInText);
+            });
         },
         createFishArrays(){
             [...attributeOrder, 'id'].forEach(attr => {
@@ -384,6 +389,10 @@ var fullAPI = (function(){
         matching: {
             fisheries
         } 
+    };
+
+    var views = {
+
     };
 
     return {

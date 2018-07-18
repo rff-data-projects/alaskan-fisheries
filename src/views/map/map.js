@@ -1,6 +1,7 @@
 import s from './styles.scss';
+import ls from './legend.scss';
 import map from './map.html';
-import legend from './legend.html';
+import legend from '!html-es6-template-loader!./legend.html';
 export default {
     init(){
        console.log(s);
@@ -10,7 +11,7 @@ export default {
 
         var legendDiv = document.createElement('div');
         legendDiv.className = 'legend-container';
-        legendDiv.innerHTML = legend;
+        legendDiv.innerHTML = legend(ls);
         div.appendChild(legendDiv);
         document.querySelector('.main-column').appendChild(div);
 
