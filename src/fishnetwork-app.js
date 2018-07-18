@@ -13,6 +13,8 @@ import mapView from  './views/map/map.js';
 import sidebarView from  './views/sidebar/sidebar.js';
 import listContainer from './views/lists/lists.js';
 import sidebarStyles from './views/sidebar/styles.scss'; // should be unnecessary after refactor to constructor pattern
+import text from './front-text.md';
+
 console.log(clusters);
 
 var fullAPI = (function(){
@@ -50,7 +52,8 @@ var fullAPI = (function(){
                 ['preview', this.highlightNodes],
                 ['preview', this.updateSidebars],
                 ['selection', this.updateSidebars],
-                ['selection', this.updateLists]
+                ['selection', this.updateLists],
+                ['preview', this.updateLists]
             ]);
             console.log(fisheries);
             this.createFishArrays();
@@ -61,11 +64,15 @@ var fullAPI = (function(){
                 sidebarView.init.call(model,sidebar);
             });
             this.setNetworkDetails();
-            views.listContainer = new listContainer([{title:'most connected'},{title:'least connected'}]);
+            views.listContainer = new listContainer('#fisheries-details',[{title:'Most connected fisheries'}]);
+            this.addFrontText();
+        },
+        addFrontText(){
+            document.querySelector('.main-column').insertAdjacentHTML('beforeend',text);
         },
         updateLists(msg,data){
             views.listContainer.children.forEach(list => {
-                list.update(msg,data,controller.fadeInText);
+                list.update(msg,data,controller.fadeInText,model);
             });
         },
         createFishArrays(){

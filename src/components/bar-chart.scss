@@ -3,14 +3,37 @@
     fill: #BCBEC0;
 }
 .foreground {
-    fill: $blue
+    fill: $blue;
+    transition: fill 0.25s linear;
+    &[data-id='1']{
+        fill: #30653a;
+    }
+    &[data-id='2']{
+        fill: #7d4f00;
+    }
+    &[data-id='3']{
+        fill: #4e597d;
+    }
+    &[data-id='4']{
+        fill: #2a616e;
+    }
+    &[data-id='5']{
+        fill: #a3301e;
+    }
+    &[data-id='6']{
+        fill: #81447f;
+    }
+    &[data-id='7']{
+        fill: #005fa9;
+    }
+
 }
 .hashmark {
     fill: $dark_gray;
-    opacity: 0.2;
+    opacity: 0.3;
 }
 .scaleType {
     font-size: 5px;
     text-anchor: end;
-    fill: #BCBEC0;
+    fill: $dark_gray;
 }

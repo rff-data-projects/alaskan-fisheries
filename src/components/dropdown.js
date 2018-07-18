@@ -1,6 +1,7 @@
 export default function(attribute, s){
-    console.log(attribute);
+    console.log(attribute, s);
     var dropdown = document.createElement('select');
+    dropdown.setAttribute('id', 'dropdown-' + attribute);
     dropdown.setAttribute('class', s['dropdown-' + attribute]);
     dropdown.setAttribute('disabled','');
     var nullOption = document.createElement('option');

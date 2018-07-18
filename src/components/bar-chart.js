@@ -77,8 +77,6 @@ Barchart.prototype = {
                 } else {
                     console.log(this.scale(d[this.field]));
                     return this.scale(d[this.field]);
-                  //  console.log(this.field, d[this.field], this.minDomain, this.maxDomain);
-                    //return 0;
                 }
             });
 
@@ -92,12 +90,23 @@ Barchart.prototype = {
     },
     update(id){
         if ( id !== 'reset' ){
+
             this.foreground
                 .data([this.data.find(d => d.id === id)])
+                .attr('data-id', d => d.id)
                 .transition().duration(250)
-                .attr('width', d => this.scale(d[this.field]));
+                .attr('width', d => {
+                    if ( isNaN(this.scale(d[this.field])) || this.scale(d[this.field]) === -Infinity ) {
+                        return 0;
+                    } else {
+                        console.log(this.scale(d[this.field]));
+                        return this.scale(d[this.field]);
+                    }
+                });
+                
         } else {
             this.foreground
+                .attr('data-id', '')
                 .transition().duration(250)
                 .attr('width', 0);   
         }

@@ -29,9 +29,12 @@
  *  COLUMNS
  */
 
-#app-container * {
-  box-sizing: border-box;
-}
+#app-container {
+  margin-bottom: 40px;
+  * {
+      box-sizing: border-box;
+    }
+  } 
 
 #dev-container {
   max-width:1200px;
@@ -52,9 +55,12 @@
   }
  }
  .side-column {
-  flex-grow:1;
-  width:400px;
-  padding-top: 43px;
+    flex-grow:1;
+    width: 437px;
+    margin-top: 43px;
+    border-left: 1px solid #d1d2d4;
+    padding-left: 20px;
+
  }
 
  /*

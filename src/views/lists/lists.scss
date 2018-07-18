@@ -1,10 +1,39 @@
 .listView {
+    p {
+        font-weight: bold;
+    }
     flex-grow:1;
-    height: 200px;
-    border: 1px solid magenta;
+    
+    //border: 1px solid magenta;
+
+    ol {
+        padding-left: 1em;
+        max-width: 230px;
+        transition: opacity 0.25s linear;
+        margin-bottom: 0;
+        &.hidden li {
+            span {
+                color: #bcbec0;
+            }
+            span:first-child {
+                    font-weight: normal;
+                } 
+        } 
+        li {
+
+             > span {
+                display: flex;
+                justify-content: space-between;
+                span:first-child {
+                    font-weight: bold;
+                }
+            }
+        }
+    }
 }
 .listsContainer {
     display: flex;
+    margin-top: 20px;
 }
 .relativeTo {
     transition: opacity 0.25s linear;

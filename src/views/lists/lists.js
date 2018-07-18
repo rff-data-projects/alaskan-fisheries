@@ -1,6 +1,26 @@
+/* global d3 */
 import s from './lists.scss';
-export default function ListView(configs){
+import adjacency from '../../data/adjacency-matrix.csv';
+
+var keyedAdjacency = adjacency.map(each => {
+    var values = [];
+    for (var key in each ){
+        if ( each.hasOwnProperty(key) && key !== 'self' && key !== each.self ) {
+            values.push({
+                key,
+                value: each[key]
+            });
+        }
+    }
+    values.sort((a,b) => d3.descending(a.value, b.value));
+    return {
+        key: each.self,
+        values
+    };
+});
+export default function ListView(selector, configs){
     this.configs = configs;
+    this.selector = selector;
     this.children = [];
     this.init();
 }
@@ -12,13 +32,13 @@ ListView.prototype = {
         this.configs.forEach(config => {
             this.children.push(new List(container, config));
         });
-        document.querySelector('.main-column').appendChild(container);
+        document.querySelector(this.selector).appendChild(container);
     }
 };
 
 function List(container, config){
 
-    this.container = container;
+    this.parent = container;
     this.config = config;
     this.init();
 }
@@ -27,14 +47,46 @@ List.prototype = {
     init(){
         var div = document.createElement('div');
         div.className = s.listView;
-        div.innerHTML = '<h4>Fisheries '+ this.config.title + ' <span class="' + s.relativeTo + '">overall</span></h4>';
-        this.container.appendChild(div);
+        div.innerHTML = '<p>' + this.config.title + '</p>';
+        this.list = document.createElement('ol');
+        div.appendChild(this.list)
+        this.container = div;
+        this.parent.appendChild(div);
         this.update('selection', null);
     },
-    update(msg,data,fn){
-        console.log(msg,data);
-        document.querySelectorAll(`span.${s.relativeTo}`).forEach(span => {
-            fn(span, data !== null ? 'to ' + data[1] : 'overall');
-        });
+    update(msg,data,fadeInText){
+        console.log(this,msg,data);
+       
+        /* update list */
+        if ( data !== null) {
+            this.list.classList.remove(s.hidden);
+        } else {
+            this.list.classList.add(s.hidden);
+        }
+        var matchingValues = data !== null ? keyedAdjacency.find(obj => obj.key === data[1]).values : null;
+        var temp = document.createElement('div');
+      /*  var x;
+        if ( matchingValues === null ){
+            x = 5;
+        } else {
+            x = 0;
+            for ( let i = 0; i < 5; i++ ){
+                if ( matchingValues[i].value > 0 ) {
+                    x++;
+                }
+            }
+        }*/
+        for ( let i = 0; i < 5; i++ ){
+                let listItem = document.createElement('li');
+                listItem.innerHTML = `<span><span>${data !== null && matchingValues[i].value > 0 ? matchingValues[i].key : 'n.a.'}</span> <span>${data !== null && matchingValues[i].value > 0? '(' + matchingValues[i].value + ' shared permits)' : ''}</span></span>`;
+                temp.appendChild(listItem);
+        }
+        if ( fadeInText ) {
+            fadeInText(this.list,temp.innerHTML);
+        } else {
+            this.list.innerHTML = temp.innerHTML;
+        }
+
+
     }
 };
