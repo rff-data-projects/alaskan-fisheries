@@ -12,7 +12,7 @@ import selectionView from './views/selection/selection.js';
 import mapView from  './views/map/map.js';
 import sidebarView from  './views/sidebar/sidebar.js';
 import listView from './views/lists/lists.js';
-
+import sidebarStyles from './views/sidebar/styles.scss'; // should be unnecessary after refactor to constructor pattern
 console.log(clusters);
 
 var fullAPI = (function(){
@@ -322,7 +322,7 @@ var fullAPI = (function(){
                         var div = document.querySelector(`#${sb.id}-details`);
                         var matchFn = sb.id === 'fisheries' ? x => x.id === data[1] : sb.id === 'clusters' ? x => x.id === model.fisheries.find(f => f.id === data[1]).cluster : () => true;
                         var titleField = sb.id === 'fisheries' ? 'id' : 'cluster';
-                        div.classList.remove('notApplicable');
+                        div.classList.remove(sidebarStyles.notApplicable);
                         var titleText = ( sb.id === 'clusters' ? 'Cluster ' : '') + model.fisheries.find(f => f.id === data[1])[titleField];
                         controller.fadeInText(div.querySelector('h4'), titleText);
                         sb.fields.forEach(field => {
@@ -340,7 +340,7 @@ var fullAPI = (function(){
                 sidebars.forEach(sb => {
                     if (sb.id !== 'network'){
                         var div = document.querySelector(`#${sb.id}-details`);
-                        div.classList.add('notApplicable');
+                        div.classList.add(sidebarStyles.notApplicable);
                         div.querySelectorAll('span.field-value').forEach(span => {
                             controller.fadeInText(span, 'n.a.');
                         });
@@ -362,7 +362,7 @@ var fullAPI = (function(){
         },
         setNetworkDetails(){
             var div = document.querySelector('#network-details');
-            div.classList.remove('notApplicable');
+            div.classList.remove(sidebarStyles.notApplicable);
             sidebars.find(sb => sb.id === 'network').fields.forEach((field,i) => {
                 var valueSpan = div.querySelector(`.field-${field} .field-value`);
                 console.log(network);

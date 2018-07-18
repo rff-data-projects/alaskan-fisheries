@@ -26,25 +26,28 @@ module.exports = {
     devtool: 'inline-source-map', // may be too slow an option; set to another if so
     mode: 'production',
     module: {
-    	rules: [ 
+    	rules: [  // the only difference now bt excluded and nonexcluded is that exc files are not being loaded as modules
+                  // meaning their classes are specified as plain strings, normally, not at [style].[property]  references
+                  // all styles are `import`ed and then processed to be part of one external stylesheet
             {
                 test: /\.scss$/,
-                exclude: /main\.scss/,
-                use: [{
-                    loader: 'style-loader'
-                },{
-                    loader: 'css-loader',
-                    options: {
-                        modules: true,
-                        localIdentName: '[local]',
-                        sourceMap: true
+                exclude: [/main\.scss/,/map\/styles\.scss/],
+                use: [scssSharedLoaders[0],
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: true,
+                            localIdentName: '[local]',
+                            sourceMap: true,
+                            minimize: true,
+                            importLoaders: 1 
                     }
                 },
                 ...scssSharedLoaders.slice(1)]
             },
             {
-                test: /main\.scss/, // the html refering to classes in main.scss is hard-coded in the index.ejs template
-                                    // and therefore these styles should not be renamed bc the html would no longer match
+                test: [/main\.scss/,/map\/styles\.scss/], 
+                                    
                 use: [scssSharedLoaders[0],
                     {
                         loader: 'css-loader',

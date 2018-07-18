@@ -11,16 +11,16 @@ export default {
         selectors.setAttribute('id','selectors');
         selectors.innerHTML = `
             <div class="flex grow items-center layout ${s.selector}">
-                ${createDropdown.call(model,'species')} <div><b> + </b></div> 
+                ${createDropdown.call(model,'species', s)} <div><b> + </b></div> 
             </div>
             <div class="flex grow items-center layout ${s.selector}">
-                ${createDropdown.call(model,'gear')} <div><b> + </b></div> 
+                ${createDropdown.call(model,'gear', s)} <div><b> + </b></div> 
             </div>
             <div class="flex grow items-center layout ${s.selector}">
-                ${createDropdown.call(model,'area')} 
+                ${createDropdown.call(model,'area', s)} 
             </div>
             <div class="flex grow items-center layout ${s.selector}">
-                <div><b>—OR— </b></div>${createDropdown.call(model,'id')} 
+                <div><b>&mdash;OR&mdash; </b></div>${createDropdown.call(model,'id', s)} 
             </div>
         `;
 
