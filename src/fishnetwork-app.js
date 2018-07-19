@@ -31,7 +31,7 @@ var fullAPI = (function(){
             name: 'Cluster details',
             id: 'clusters',
             data: clusters,
-            fields: ['fisheries','avg_permits','density','avg_degree', 'avg_edge_weight', 'avg_closeness_centrality'],
+            fields: ['fisheries','avg_permits','density','avg_degree', 'avg_edge_weight_cluster', 'avg_closeness_centrality'],
             charts: [] 
         },
         {

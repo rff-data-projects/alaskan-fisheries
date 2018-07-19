@@ -8,10 +8,11 @@ export default function Barchart(container, sidebar, field){
         closeness_centrality: 'log',
         avg_edge_weight: 'log',
         fisheries: 'linear',
-        avg_permits: 'log',
-        density: 'log',
+        avg_permits: 'linear',
+        density: 'linear',
         avg_degree: 'linear',
-        avg_closeness_centrality: 'log'
+        avg_closeness_centrality: 'linear',
+        avg_edge_weight_cluster: 'linear'
     };
     this.scaleType = scaleTypes[field] === 'log' ? d3.scaleLog() : d3.scaleLinear();
     this.scaleTypeStr = scaleTypes[field];
@@ -79,6 +80,32 @@ Barchart.prototype = {
                     return this.scale(d[this.field]);
                 }
             });
+
+        this.medianGroup = barGroup.selectAll('g.' + s.median)
+            .data([d3.median(this.data.filter(d => !isNaN(d[this.field])), d => {
+                if ( isNaN(this.scale(d[this.field])) || this.scale(d[this.field]) === -Infinity ) {
+                    return null;
+                } else {
+                    console.log(this.scale(d[this.field]));
+                    return this.scale(d[this.field]);
+                }
+            })])
+            .enter().append('g')
+            .attr('transform', d => 'translate(' + d + ',0)')
+            .attr('class', s.median);
+
+        this.medianHash = this.medianGroup.append('rect')
+                .attr('class', s.hashmark + ' ' + s.median)
+                .attr('width', 0.75)
+                .attr('height', this.height / 3);
+
+        this.medianLabel = this.medianGroup.append('text')
+            .attr('class', s.medianLabel)
+            .attr('y',-0.5)
+            .text('median');
+                
+
+
 
         if ( this.scaleTypeStr === 'log' ){
             svg.append('text')

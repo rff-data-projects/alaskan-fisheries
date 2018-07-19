@@ -31,9 +31,18 @@
 .hashmark {
     fill: $dark_gray;
     opacity: 0.3;
+    &.median {
+        opacity: 1;
+        fill: #fff;
+    }
 }
 .scaleType {
     font-size: 5px;
     text-anchor: end;
+    fill: $dark_gray;
+}
+.medianLabel {
+    font-size:5px;
+    text-anchor: middle;
     fill: $dark_gray;
 }

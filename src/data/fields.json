@@ -7,5 +7,6 @@
     "density": "Density",
     "avg_degree": "Avg. degree",
     "avg_closeness_centrality": "Avg. closeness centrality",
-    "avg_permits":"Avg. permits per fishery"
+    "avg_permits":"Avg. permits per fishery",
+    "avg_edge_weight_cluster":"Avg. edge weight"
 }
