@@ -1,6 +1,7 @@
 /* global d3 */
 import s from './lists.scss';
 import adjacency from '../../data/adjacency-matrix.csv';
+import { stateModule as S } from 'stateful-dead';
 
 var keyedAdjacency = adjacency.map(each => {
     var values = [];
@@ -78,14 +79,35 @@ List.prototype = {
         }*/
         for ( let i = 0; i < 5; i++ ){
                 let listItem = document.createElement('li');
+                listItem.setAttribute('tabindex', '0');
+                listItem.setAttribute('data-id', data !== null && matchingValues[i].value > 0 ? matchingValues[i].key : null);
                 listItem.innerHTML = `<span><span>${data !== null && matchingValues[i].value > 0 ? matchingValues[i].key : 'n.a.'}</span> <span>${data !== null && matchingValues[i].value > 0? '(' + matchingValues[i].value + ' shared permits)' : ''}</span></span>`;
                 temp.appendChild(listItem);
         }
         if ( fadeInText ) {
-            fadeInText(this.list,temp.innerHTML);
+            fadeInText(this.list,temp.innerHTML).then(() => {
+                setEventListeners.call(this);
+            });
         } else {
             this.list.innerHTML = temp.innerHTML;
+            setEventListeners.call(this);
         }
+        function setConnectedState(){
+            S.setState('connected', this.dataset.id);
+        }
+        function unsetConnectedState(){
+            S.setState('connected', null);
+        }
+        function setEventListeners(){
+            console.log(S, this);
+            this.list.querySelectorAll('li').forEach(item => {
+                item.addEventListener('mouseenter', setConnectedState);
+                item.addEventListener('mouseleave', unsetConnectedState);
+                item.addEventListener('focus', setConnectedState);
+                item.addEventListener('blur', unsetConnectedState);
+            });
+        }
+        
 
 
     }

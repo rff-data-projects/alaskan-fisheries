@@ -1,3 +1,4 @@
+@import '../../css/_variables.scss';
 .sidebarDiv {
     &:first-of-type {
         h3 {
@@ -12,6 +13,7 @@
         font-size:0.8em;
         min-height:17px;
         transition: opacity 0.25s linear;
+        color: $blue;
 
     }
     .notApplicable {

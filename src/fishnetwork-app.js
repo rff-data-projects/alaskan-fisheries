@@ -56,7 +56,8 @@ var fullAPI = (function(){
                 ['preview', this.updateLists],
                 ['selection', this.announceClusterState],
                 ['preview', this.announceClusterState],
-                ['cluster', this.updateClusterDetails]
+                ['cluster', this.updateClusterDetails],
+                ['connected', this.highlightConnected]
 
 
             ]);
@@ -268,6 +269,15 @@ var fullAPI = (function(){
                 hideDetails();*/
             }
         },
+        highlightConnected(msg,data){
+            var svg = document.querySelector('.map-container svg');
+            if ( svg.querySelector('circle.connected') ){
+                svg.querySelector('circle.connected').classList.remove('connected');   
+            }
+            if ( data !== null && data !== 'null' ){
+                svg.querySelector('circle[data-name=' + data + ']').classList.add('connected');
+            }
+        },
         highlightNodes(msg,data){
             console.log(msg,data);
             
@@ -371,14 +381,17 @@ var fullAPI = (function(){
             controller.fadeInText(el, text);
         },
         fadeInText(el,text){
-            var durationStr = window.getComputedStyle(el).getPropertyValue('transition-duration');
-            var duration = parseFloat(durationStr) * 1000;
-            console.log(duration);
-            el.classList.add('no-opacity');
-            setTimeout(() => {
-                el.innerHTML = text;
-                el.classList.remove('no-opacity');
-            }, duration);
+            return new Promise((resolve) => {
+                var durationStr = window.getComputedStyle(el).getPropertyValue('transition-duration');
+                var duration = parseFloat(durationStr) * 1000;
+                console.log(duration);
+                el.classList.add('no-opacity');
+                setTimeout(() => {
+                    el.innerHTML = text;
+                    el.classList.remove('no-opacity');
+                    resolve(true);
+                }, duration);
+            });
 
         },
         updateFisheryDetails(msg,data){ // TO DO: GIVE SCOPE TO THE S DOT STYLE DEFINITIONS
@@ -388,17 +401,13 @@ var fullAPI = (function(){
             if ( data !== null ){
                 //var matchFn = sb.id === 'fisheries' ? x => x.id === data[1] : sb.id === 'clusters' ? x => x.id === model.fisheries.find(f => f.id === data[1]).cluster : () => true;
                 let matchFn = x => x.id === data[1];
-                //let titleField = sb.id === 'fisheries' ? 'id' : 'cluster';
-                let titleField = 'fisheries';
                 div.classList.remove(sidebarStyles.notApplicable);
-                //let titleText = ( sb.id === 'clusters' ? 'Cluster ' : '') + model.fisheries.find(f => f.id === data[1])[titleField];
-                let titleText = model.fisheries.find(f => f.id === data[1])[titleField];
+                let titleText = model.fisheries.find(f => f.id === data[1]).id;
                 controller.fadeInText(div.querySelector('h4'), titleText);
                 sb.fields.forEach(field => {
                     index++;
                     var valueSpan = div.querySelector(`.field-${field} .field-value`);
                     var value = !isNaN(sb.data.find(matchFn)[field]) ? d3.format(',')(sb.data.find(matchFn)[field]) : 'n.a.';
-                    // specify matching criteria for the different sidebars; node sidebar: id matches id; cluster: id matches cluster of fishery matching id: network: doesn't change fn retur true always
                     setTimeout(() => {
                         controller.fadeInText(valueSpan, value);
                     },index * 25 + 6);
