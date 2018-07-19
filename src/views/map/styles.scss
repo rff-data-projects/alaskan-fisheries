@@ -140,17 +140,27 @@
 
   .nodes text {
     font-size: 1px;
+    transition: opacity 0.25s linear;
+    &.hide {
+      opacity: 0;
+    }
   }
+
+
 
   path.alaska {
     fill: #BCBEC0; stroke: #58585B;
   }
 
   .statewide-rect {
-  fill:none;
-  stroke: #000;
-  stroke-width: 0.1;
-}
+    fill:none;
+    stroke: #000;
+    stroke-width: 0.1;
+    transition: opacity 0.25s linear;
+    &.hide {
+      opacity: 0;
+    }
+  }
 }
 
 } // end .map-container

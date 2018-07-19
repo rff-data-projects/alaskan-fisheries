@@ -302,6 +302,44 @@ var fullAPI = (function(){
                         }
                     });
                 });
+                checkClusterLabels();
+                checkStatewideRects();
+            }
+            function checkClusterLabels(){
+                var activeNodes = svg.querySelectorAll('circle.active, circle.attached');
+                console.log(activeNodes);
+                var activeClusters = [];
+                activeNodes.forEach(nd => {
+                    var index = activeClusters.indexOf(nd.dataset.cluster);
+                    if ( index === -1 ){
+                        activeClusters.push(nd.dataset.cluster);
+                    }
+                });
+                console.log(activeClusters);
+                [1,2,3,4,5].forEach(c => {
+                    if (activeClusters.indexOf(c.toString()) === -1 ){
+                        svg.querySelector('.cluster-label-' + c).classList.add('hide');
+                    } else {
+                        svg.querySelector('.cluster-label-' + c).classList.remove('hide');
+                    }
+                });
+
+            }
+            function checkStatewideRects(){
+                 var activeStatewide = svg.querySelectorAll('circle[data-area="Statewide"].active, circle[data-area="Statewide"].attached');
+                 var activeStatewideClusters = [];
+                 activeStatewide.forEach(nd => {
+                    if ( activeStatewideClusters.indexOf(nd.dataset.cluster) === -1 ){
+                        activeStatewideClusters.push(nd.dataset.cluster);
+                    }
+                 });
+                 [1,2,3,4,5,6].forEach(c => {
+                    if (activeStatewideClusters.indexOf(c.toString()) === -1 ){
+                        svg.querySelector('rect.statewide-rect-cluster-' + c).classList.add('hide');
+                    } else {
+                        svg.querySelector('rect.statewide-rect-cluster-' + c).classList.remove('hide');
+                    }
+                 });
             }
             function unhighlightLinkedNodes(){
                 svg.querySelectorAll('line.active').forEach(l => {
@@ -309,6 +347,12 @@ var fullAPI = (function(){
                 });
                 svg.querySelectorAll('circle.attached').forEach(c => {
                     c.classList.remove('attached');
+                });
+                svg.querySelectorAll('.nodes text').forEach(c => {
+                    c.classList.remove('hide');
+                });
+                svg.querySelectorAll('rect.statewide-rect').forEach(rect => {
+                    rect.classList.remove('hide');
                 });
             }
         },
