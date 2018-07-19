@@ -53,7 +53,12 @@ var fullAPI = (function(){
                 ['preview', this.updateFisheryDetails],
                 ['selection', this.updateFisheryDetails],
                 ['selection', this.updateLists],
-                ['preview', this.updateLists]
+                ['preview', this.updateLists],
+                ['selection', this.announceClusterState],
+                ['preview', this.announceClusterState],
+                ['cluster', this.updateClusterDetails]
+
+
             ]);
             console.log(fisheries);
             this.createFishArrays();
@@ -119,6 +124,12 @@ var fullAPI = (function(){
                 //this.resetSelections();
                 S.setState('selection', null);
             };
+        },
+        announceClusterState(msg,data){
+            console.log(msg,data);
+            var cluster = data !== null ? model.fisheries.find(f => f.id === data[1]).cluster : null;
+            console.log(cluster);
+            S.setState('cluster', cluster);
         },
         checkDropdownOptions(msg,data){
             model.matching.fisheries = model.matching.fisheries.filter(each => { // filter the fisheries acc to selection
@@ -357,6 +368,32 @@ var fullAPI = (function(){
                     
             }
             controller.updateCharts(data);
+        },
+        updateClusterDetails(msg,data){ // TO DO: GIVE SCOPE TO THE S DOT STYLE DEFINITIONS
+            var sb = sidebars[1];
+            var div = document.querySelector(`#${sb.id}-details`);
+            var index = 0;
+            if ( data !== null ){
+               div.classList.remove(sidebarStyles.notApplicable);
+               let titleText = 'Cluster ' + data;
+               controller.fadeInText(div.querySelector('h4'), titleText);
+               sb.fields.forEach(field => {
+                    index++;
+                    var valueSpan = div.querySelector(`.field-${field} .field-value`);
+                    var value = !isNaN(sb.data.find(f => f.id === data)[field]) ? d3.format(',')(sb.data.find(f => f.id === data)[field]) : 'n.a.';
+                    // specify matching criteria for the different sidebars; node sidebar: id matches id; cluster: id matches cluster of fishery matching id: network: doesn't change fn retur true always
+                    setTimeout(() => {
+                        controller.fadeInText(valueSpan, value);
+                    },index * 25 + 6);
+                });
+            } else {
+                div.classList.add(sidebarStyles.notApplicable);
+                div.querySelectorAll('span.field-value').forEach(span => {
+                    controller.fadeInText(span, 'n.a.');
+                });
+                controller.fadeInText(div.querySelector('h4'), '');
+            }
+            
         },
         updateCharts(data){
             sidebars.forEach(sidebar => {
