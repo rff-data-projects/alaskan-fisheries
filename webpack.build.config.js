@@ -32,7 +32,9 @@ module.exports = {
             {
                 test: /\.scss$/,
                 exclude: [/main\.scss/,/map\/styles\.scss/],
-                use: [scssSharedLoaders[0],
+                use: [
+                    scssSharedLoaders[0],
+                    
                     {
                         loader: 'css-loader',
                         options: {
@@ -48,7 +50,9 @@ module.exports = {
             {
                 test: [/main\.scss/,/map\/styles\.scss/], 
                                     
-                use: [scssSharedLoaders[0],
+                use: [
+                    scssSharedLoaders[0],
+                    
                     {
                         loader: 'css-loader',
                         options: {
