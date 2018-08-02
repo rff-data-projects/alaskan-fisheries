@@ -1,3 +1,17 @@
+.selectionDiv {
+    padding-bottom: 10px;
+    padding-top:0.625em;
+    width: 100%;
+    //will-change: scroll-position;
+    background-color: #fff;
+    z-index:9;
+    border-bottom: 1px solid #d1d2d4;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    overflow: hidden;
+}
+
 .selector {
     display:flex;
     margin-right:7px;
@@ -10,11 +24,19 @@
         flex-grow: 1;
         &.dropdown-id {
             max-width: 155px;
+            font-weight: bold;
         }
     }
 }
 .resetButton {
-    position: absolute;
-    right:14px;
-    bottom: 0;
+   
+}
+.heading {
+    margin-top:7px;
+    margin-right: 10px;
+}
+
+.fixed {
+    position: fixed;
+    top: 0;
 }

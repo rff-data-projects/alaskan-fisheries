@@ -61,17 +61,34 @@ var fullAPI = (function(){
 
 
             ]);
+            this.createScrollWatcher();
             console.log(fisheries);
             this.createFishArrays();
-            var selectionDiv = selectionView.init(model);
+            var selectionDiv = selectionView.init(model); // method: document.querySelector('.main-column').appendChild(div);
+            console.log(selectionDiv);
             this.selectionOnRender(selectionDiv);
-            this.mapViewOnRender(mapView.init());
+            this.mapViewOnRender(mapView.init()); // method: document.querySelector('.main-column').appendChild(div);
             sidebars.forEach(sidebar => {
-                sidebarView.init.call(model,sidebar);
+                sidebarView.init.call(model,sidebar); // method: document.querySelector('.side-column').appendChild(div);
             });
             this.setNetworkDetails();
             views.listContainer = new listContainer('#fisheries-details',[{title:'Most connected fisheries'}]);
             this.addFrontText();
+        },
+        scrollPositions: 0,
+        createScrollWatcher(){
+            var html = document.querySelector('html');
+            var body = document.querySelector('body');
+            var timeout;
+            window.onscroll = function(){
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    console.log(body.scrollTop);
+                    console.log(html.scrollTop);    
+                    controller.scrollPosition = Math.max(body.scrollTop, html.scrollTop);
+                    console.log(controller.scrollPosition);
+                },250);
+            }
         },
         addFrontText(){
             document.querySelector('.main-column').insertAdjacentHTML('beforeend',text);
@@ -107,16 +124,22 @@ var fullAPI = (function(){
             console.log(model);
         },
         selectionOnRender(div){
-            div.querySelectorAll('select').forEach((select,i, array) => {
+            div.querySelectorAll('select, button').forEach((select,i, array) => {
+                select.onfocus = function(){
+                    console.log(controller.scrollPosition);
+                    window.scrollTo(0,controller.scrollPosition);
+                };
                 if ( i === 0 || i === array.length - 1 ) {
                     select.removeAttribute('disabled');
                 }
                 if ( i < array.length - 1 ){
                     select.onchange = function(e){
+
                         S.setState('partialSelection', e.target.value.split('--'));
                     };
                 } else {
                     select.onchange = function(e){
+                        e.preventDefault();
                         S.setState('selection', e.target.value.split('--'));
                     };
                 }
@@ -125,6 +148,7 @@ var fullAPI = (function(){
                 //this.resetSelections();
                 S.setState('selection', null);
             };
+
         },
         announceClusterState(msg,data){
             console.log(msg,data);
