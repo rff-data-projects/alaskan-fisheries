@@ -48,7 +48,6 @@ var fullAPI = (function(){
                 ['partialSelection', this.checkDropdownOptions],
                 ['selection', this.selectFishery],
                 ['selection', this.highlightNodes],
-                ['selection', this.setMainLabel],
                 ['preview', this.highlightNodes],
                 ['preview', this.updateFisheryDetails],
                 ['selection', this.updateFisheryDetails],
@@ -390,26 +389,15 @@ var fullAPI = (function(){
                 });
             }
         },
-        setMainLabel(msg,data){
-            console.log(msg,data);
-            var el = document.querySelector('.main-column h2');
-            var text;
-            if ( data !== null ){
-                text = data[1].split('-').reduce((acc, cur, i) => {
-                    console.log(acc, cur, attributeOrder[i],model.dict[attributeOrder[i]][cur]);
-                    return i === 0 ? model.dict[attributeOrder[i]][cur] : acc + ' — ' + model.dict[attributeOrder[i]][cur];
-                },'') + ' (' + data[1] + ')';
-            } else {
-                text = 'Select a fishery';
-            }
-            controller.fadeInText(el, text);
+        fadeOutText(el){
+            el.classList.add('no-opacity');
         },
         fadeInText(el,text){
             return new Promise((resolve) => {
                 var durationStr = window.getComputedStyle(el).getPropertyValue('transition-duration');
                 var duration = parseFloat(durationStr) * 1000;
                 console.log(duration);
-                el.classList.add('no-opacity');
+                controller.fadeOutText(el);
                 setTimeout(() => {
                     el.innerHTML = text;
                     el.classList.remove('no-opacity');
@@ -426,8 +414,11 @@ var fullAPI = (function(){
                 //var matchFn = sb.id === 'fisheries' ? x => x.id === data[1] : sb.id === 'clusters' ? x => x.id === model.fisheries.find(f => f.id === data[1]).cluster : () => true;
                 let matchFn = x => x.id === data[1];
                 div.classList.remove(sidebarStyles.notApplicable);
-                let titleText = model.fisheries.find(f => f.id === data[1]).id;
+                let titleText = data[1].split('-').reduce((acc, cur, i) => {
+                    return i === 0 ? model.dict[attributeOrder[i]][cur] : acc + ' — ' + model.dict[attributeOrder[i]][cur];
+                },'');
                 controller.fadeInText(div.querySelector('h4'), titleText);
+                controller.fadeInText(div.parentNode.querySelector('h3'), data[1]);
                 sb.fields.forEach(field => {
                     index++;
                     var valueSpan = div.querySelector(`.field-${field} .field-value`);
@@ -442,6 +433,7 @@ var fullAPI = (function(){
                     controller.fadeInText(span, 'n.a.');
                 });
                 controller.fadeInText(div.querySelector('h4'), '');
+                controller.fadeOutText(div.parentNode.querySelector('h3'));
                     
             }
             controller.updateCharts(data);
@@ -453,7 +445,9 @@ var fullAPI = (function(){
             if ( data !== null ){
                div.classList.remove(sidebarStyles.notApplicable);
                let titleText = 'Cluster ' + data;
-               controller.fadeInText(div.querySelector('h4'), titleText);
+               let heading = div.parentNode.querySelector('h3');
+               heading.className = 'cluster-' + data;
+               controller.fadeInText(div.parentNode.querySelector('h3'), titleText);
                sb.fields.forEach(field => {
                     index++;
                     var valueSpan = div.querySelector(`.field-${field} .field-value`);
@@ -468,7 +462,7 @@ var fullAPI = (function(){
                 div.querySelectorAll('span.field-value').forEach(span => {
                     controller.fadeInText(span, 'n.a.');
                 });
-                controller.fadeInText(div.querySelector('h4'), '');
+                controller.fadeOutText(div.parentNode.querySelector('h3'));
             }
             
         },

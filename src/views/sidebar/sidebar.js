@@ -5,7 +5,7 @@ export default { // called with `this` = model
         console.log(sidebar);
         var div = document.createElement('div');
         div.className = s.sidebarDiv + ' ' + sidebar.id;
-        div.innerHTML = `<h3>${sidebar.name}</h3>`
+        div.innerHTML = `<h3 class="no-opacity">${sidebar.name}</h3>`
         var container = document.createElement('div');
         container.id = `${sidebar.id}-details`;
         container.className = s.notApplicable;
