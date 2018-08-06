@@ -1,4 +1,4 @@
-/* globals d3 */
+/* global d3 */
 import { stateModule as S } from 'stateful-dead';
 import PS from 'pubsub-setter';
 import fisheries from './data/fisheries-sorted.csv';
@@ -45,20 +45,17 @@ var fullAPI = (function(){
         init(){
             console.log(PS);
             PS.setSubs([
+                ['cluster', this.updateClusterDetails],
+                ['highlightConnected', this.highlightConnected],
                 ['partialSelection', this.checkDropdownOptions],
+                ['preview', this.updateFisheryDetails],
+                ['preview', this.highlightNodes],
                 ['selection', this.selectFishery],
                 ['selection', this.highlightNodes],
-                ['preview', this.highlightNodes],
-                ['preview', this.updateFisheryDetails],
                 ['selection', this.updateFisheryDetails],
                 ['selection', this.updateLists],
-                ['preview', this.updateLists],
                 ['selection', this.announceClusterState],
-                ['preview', this.announceClusterState],
-                ['cluster', this.updateClusterDetails],
-                ['connected', this.highlightConnected]
-
-
+                ['selection', this.highlightListItems]
             ]);
             this.createScrollWatcher();
             console.log(fisheries);
@@ -71,7 +68,8 @@ var fullAPI = (function(){
                 sidebarView.init.call(model,sidebar); // method: document.querySelector('.side-column').appendChild(div);
             });
             this.setNetworkDetails();
-            views.listContainer = new listContainer('#fisheries-details',[{title:'Most connected fisheries'}]);
+            views.listContainer = new listContainer('#fisheries-details',[{title:'Fisheries most connected to [selected]', id: 'relative'}]);
+            views.mostAndLeastList = new listContainer('.map-container',[{title:'Most connected fisheries', id: 'most'},{title: 'Least connected fisheries', id: 'least'}], model.fisheries); 
             this.addFrontText();
         },
         scrollPositions: 0,
@@ -257,9 +255,9 @@ var fullAPI = (function(){
             function activate(e){
                 e.stopPropagation();
                 clearTimeout(timeout);
-                if (!S.getState('selection')) { // only allow mouseover  preview / depreview if nothing is selected
+               // if (!S.getState('selection')) { // only allow mouseover  preview / depreview if nothing is selected
                     S.setState('preview',['id',this.dataset.name]);
-                }
+               // }
                 /*if (e.type !== 'focus') {
                     document.activeElement.blur();
                 } 
@@ -280,8 +278,11 @@ var fullAPI = (function(){
             function deactivate(e){
                 e.stopPropagation();
                 timeout = setTimeout(() => {
-                    if (!S.getState('selection')) { // only allow mouseover  preview / depreview if nothing is selected
+                    var selection = S.getState('selection');
+                    if (!selection) { // only allow mouseover  preview / depreview if nothing is selected
                         S.setState('preview', null);
+                    } else {
+                        S.setState('preview', selection)   
                     }
                 }, 200);
                 /*document.querySelectorAll('.nodes circle').forEach(function(each){
@@ -305,20 +306,39 @@ var fullAPI = (function(){
             console.log(msg,data);
             
             var svg = document.querySelector('.map-container svg');
-            svg.querySelectorAll('.nodes circle').forEach(function(each){
-                each.classList.add('not-active');
-                each.classList.remove('active');
-                each.classList.remove('attached');
-            });
-            unhighlightLinkedNodes();
+            var bars = document.querySelector('.sidebarDiv.fisheries');
+            if (msg === 'selection' ){
+                bars.classList.remove('preview');
+                svg.querySelectorAll('.nodes circle').forEach(function(each){
+                    each.classList.add('not-active');
+                    each.classList.remove('active');
+                    each.classList.remove('attached');
+                    each.classList.remove('preview');
+                });
+                unhighlightLinkedNodes();
+                if ( data !==  null ){
+                    svg.classList.add('activated')
+                }
+            }
+            var preview = svg.querySelector('.nodes circle.preview');
+            if (preview) {
+                preview.classList.remove('preview');
+            }
             if ( data !== null ){
-                svg.classList.add('activated')
                 let active = svg.querySelector(`.nodes circle[data-name=${data[1]}]`);
                 active.classList.remove('not-active');
-                active.classList.add('active');
-                highlightLinkedNodes(active.dataset);
+                active.classList.add(`${msg === 'selection' ? 'active' : !active.classList.contains('active') ? 'preview' : null}`);
+                if (msg ==='selection'){
+                    highlightLinkedNodes(active.dataset);
+                } else if (!active.classList.contains('active')) {
+                    bars.classList.add('preview');
+                } else {
+                    bars.classList.remove('preview');
+                }
             } else {
+                bars.classList.remove('preview');
                 svg.classList.remove('activated')
+                
             }
             function highlightLinkedNodes(d){
                 svg.querySelectorAll('line.' + d.name).forEach(l => {
@@ -436,7 +456,11 @@ var fullAPI = (function(){
                 controller.fadeOutText(div.parentNode.querySelector('h3'));
                     
             }
-            controller.updateCharts(data);
+            if ( msg === 'selection') {
+                controller.updateAllCharts(data);
+            } else {
+                controller.updateFishChart(data);
+            }
         },
         updateClusterDetails(msg,data){ // TO DO: GIVE SCOPE TO THE S DOT STYLE DEFINITIONS
             var sb = sidebars[1];
@@ -466,7 +490,7 @@ var fullAPI = (function(){
             }
             
         },
-        updateCharts(data){
+        updateAllCharts(data){
             sidebars.forEach(sidebar => {
                 if ( sidebar.charts ){
                     sidebar.charts.forEach(chart => {
@@ -474,6 +498,13 @@ var fullAPI = (function(){
                         chart.update(param);
                     });
                 }
+            });
+        },
+        updateFishChart(data){
+            var sidebar = sidebars.find(sb => sb.id === 'fisheries');
+            sidebar.charts.forEach(chart => {
+                var param = data !== null ? ( chart.sidebarID === 'fisheries' ? data[1] : model.fisheries.find(f => f.id === data[1]).cluster ) : 'reset'; // for fishery charts pass in fishery id; for cluster charts pass in cluster if matching fishery
+                chart.update(param);
             });
         },
         setNetworkDetails(){
@@ -486,6 +517,16 @@ var fullAPI = (function(){
                     controller.fadeInText(valueSpan, d3.format(',')(network[0][field]));
                 },i * 25);
             });
+        },
+        highlightListItems(msg,data){
+            document.querySelectorAll('.listView li').forEach(item => {
+                item.classList.remove('selected-list-item');
+            });
+            if ( data !== null ){
+                document.querySelectorAll('li[data-id="' + data[1] + '"]').forEach(item => {
+                    item.classList.add('selected-list-item');
+                });
+            }
         }
     };
  

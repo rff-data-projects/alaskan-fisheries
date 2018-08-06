@@ -4,6 +4,9 @@
 }
 .foreground {
     fill: $blue;
+    .preview & {
+        fill: gold;
+    }
     transition: fill 0.25s linear;
     &[data-id='1']{
         fill: #30653a;

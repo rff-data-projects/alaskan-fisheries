@@ -1,6 +1,7 @@
 @import '../../css/_variables.scss';
 .map-container {
     margin-top: 20px;
+    margin-bottom:20px;
 
  svg {
   &.activated {
@@ -73,11 +74,16 @@
       stroke:$blue;
       stroke-width: 0.5px;
     }
+    &.preview {
+      stroke: gold;
+      stroke-width: 0.5px;
+      opacity:1 !important;
+    }
     &.connected {
       stroke: gold;
       stroke-width: 0.5px;
     }
-    &.cluster-1 {
+      &.cluster-1 {
       fill: #30653a;
       
       &.attached {

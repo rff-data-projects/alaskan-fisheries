@@ -19,10 +19,12 @@ var keyedAdjacency = adjacency.map(each => {
         values
     };
 });
-export default function ListView(selector, configs){
+export default function ListView(selector, configs, fisheries){
     this.configs = configs;
     this.selector = selector;
     this.children = [];
+    this.fisheries = fisheries;
+    console.log(this.fisheries);
     this.init();
 }
 
@@ -31,16 +33,17 @@ ListView.prototype = {
         var container = document.createElement('div');
         container.className = s.listsContainer;
         this.configs.forEach(config => {
-            this.children.push(new List(container, config));
+            this.children.push(new List(container, config, this.fisheries));
         });
         document.querySelector(this.selector).appendChild(container);
     }
 };
 
-function List(container, config){
+function List(container, config, fisheries){
 
     this.parent = container;
     this.config = config;
+    this.fisheries = fisheries;
     this.init();
 }
 
@@ -48,63 +51,114 @@ List.prototype = {
     init(){
         var div = document.createElement('div');
         div.className = s.listView;
-        div.innerHTML = '<p>' + this.config.title + '</p>';
+        var opacity = this.config.id === 'relative' ? 'no-opacity' : '';
+        div.innerHTML = '<p class="' + opacity + '">' + this.config.title + '</p>';
         this.list = document.createElement('ol');
         div.appendChild(this.list)
         this.container = div;
         this.parent.appendChild(div);
-        this.update('selection', null);
+        this.update('selection', null, null);
     },
     update(msg,data,fadeInText){
-        console.log(this,msg,data);
-       
-        /* update list */
-        if ( data !== null) {
-            this.list.classList.remove(s.hidden);
-        } else {
-            this.list.classList.add(s.hidden);
-        }
-        var matchingValues = data !== null ? keyedAdjacency.find(obj => obj.key === data[1]).values : null;
-        var temp = document.createElement('div');
-      /*  var x;
-        if ( matchingValues === null ){
-            x = 5;
-        } else {
-            x = 0;
-            for ( let i = 0; i < 5; i++ ){
-                if ( matchingValues[i].value > 0 ) {
-                    x++;
-                }
+        if ( this.config.id === 'relative') {
+
+            console.log(this,msg,data);
+            console.log(this);
+            /* update list */
+            if ( data !== null) {
+                this.list.classList.remove(s.hidden);
+            } else {
+                this.list.classList.add(s.hidden);
             }
-        }*/
-        for ( let i = 0; i < 5; i++ ){
-                let listItem = document.createElement('li');
-                listItem.setAttribute('tabindex', '0');
-                listItem.setAttribute('data-id', data !== null && matchingValues[i].value > 0 ? matchingValues[i].key : null);
-                listItem.innerHTML = `<span><span>${data !== null && matchingValues[i].value > 0 ? matchingValues[i].key : 'n.a.'}</span> <span>${data !== null && matchingValues[i].value > 0? '(' + matchingValues[i].value + ' shared permits)' : ''}</span></span>`;
-                temp.appendChild(listItem);
-        }
-        if ( fadeInText ) {
-            fadeInText(this.list,temp.innerHTML).then(() => {
+            let matchingValues = data !== null ? keyedAdjacency.find(obj => obj.key === data[1]).values : null;
+            let temp = document.createElement('div');
+          /*  var x;
+            if ( matchingValues === null ){
+                x = 5;
+            } else {
+                x = 0;
+                for ( let i = 0; i < 5; i++ ){
+                    if ( matchingValues[i].value > 0 ) {
+                        x++;
+                    }
+                }
+            }*/
+            for ( let i = 0; i < 5; i++ ){
+                    let listItem = document.createElement('li');
+                    listItem.setAttribute('tabindex', '0');
+                    listItem.setAttribute('title','Click to select this fishery');
+                    listItem.setAttribute('data-id', data !== null && matchingValues[i].value > 0 ? matchingValues[i].key : null);
+                    listItem.innerHTML = `<span><span>${data !== null && matchingValues[i].value > 0 ? matchingValues[i].key : 'n.a.'}</span> <span>${data !== null && matchingValues[i].value > 0? '(' + matchingValues[i].value + ' shared permits)' : ''}</span></span>`;
+                    temp.appendChild(listItem);
+            }
+            if ( fadeInText ) {
+                fadeInText(this.list,temp.innerHTML).then(() => {
+                    setEventListeners.call(this);
+                });
+            } else {
+                this.list.innerHTML = temp.innerHTML;
                 setEventListeners.call(this);
-            });
-        } else {
-            this.list.innerHTML = temp.innerHTML;
-            setEventListeners.call(this);
+            }
+            let p = this.container.querySelector('p');
+            p.innerHTML = data !== null ? 'Fisheries most connected to ' + data[1] : 'none selected';
+            if ( data !== null ) {
+                p.classList.remove('no-opacity');
+            } else {
+                 p.classList.add('no-opacity');
+            }
+        } // end if id == relative
+            else {
+                console.log(this);
+                let temp = document.createElement('div');
+                this.fisheries.sort((a,b) => {
+                    //console.log(a,b,this);
+                    if ( a.degree > b.degree ){
+                        return this.config.id === 'most' ? -1 : 1;
+                    }
+                    if ( b.degree > a.degree ){
+                        return this.config.id === 'most' ? 1 : -1;
+                    }
+                    return 0;
+                });
+                for ( let i = 0; i < 5; i++ ){
+                    let listItem = document.createElement('li');
+                    listItem.setAttribute('tabindex', '0');
+                    listItem.setAttribute('title','Click to select this fishery');
+                    listItem.setAttribute('data-id', this.fisheries[i].id);
+                    listItem.innerHTML = `<span><span>${this.fisheries[i].id}</span></span>`;
+                    temp.appendChild(listItem);
+                }
+                this.list.innerHTML = temp.innerHTML;
+                setEventListeners.call(this);
+                console.log(this.fisheries);
+            }
+        function setPreviewState(){
+            S.setState('preview', ['id', this.dataset.id]);
         }
-        function setConnectedState(){
-            S.setState('connected', this.dataset.id);
-        }
-        function unsetConnectedState(){
-            S.setState('connected', null);
+        function unsetPreviewState(){
+            var selection = S.getState('selection');
+            if (!selection) { // only allow mouseover  preview / depreview if nothing is selected
+                S.setState('preview', null);
+            } else {
+                S.setState('preview', selection)   
+            }
         }
         function setEventListeners(){
             console.log(S, this);
             this.list.querySelectorAll('li').forEach(item => {
-                item.addEventListener('mouseenter', setConnectedState);
-                item.addEventListener('mouseleave', unsetConnectedState);
-                item.addEventListener('focus', setConnectedState);
-                item.addEventListener('blur', unsetConnectedState);
+                item.addEventListener('mouseenter', setPreviewState);
+                item.addEventListener('mouseleave', unsetPreviewState);
+                item.addEventListener('focus', setPreviewState);
+                item.addEventListener('blur', unsetPreviewState);
+                item.addEventListener('click', function(){
+                    var selection = S.getState('selection');
+                    console.log(selection);
+                    if ( !selection || selection[1] !== this.dataset.id ) { 
+                        S.setState('selection', ['id',this.dataset.id]);
+                    } else {
+                        S.setState('selection', null)   
+                    }
+                });
             });
         }
         
