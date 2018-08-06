@@ -1,7 +1,7 @@
 import s from './styles.scss';
 import ls from './legend.scss';
 import map from './map.html';
-import legend from '!html-es6-template-loader!./legend.html';
+import legend from './legend.html';
 export default {
     init(){
        console.log(s);

@@ -1,4 +1,6 @@
 /* global d3 */
+/* exported NodeListForEach */
+import { NodeListForEach, arrayFind } from './polyfills.js';
 import { stateModule as S } from 'stateful-dead';
 import PS from 'pubsub-setter';
 import fisheries from './data/fisheries-sorted.csv';
@@ -8,14 +10,16 @@ import species from './data/species.json';
 import gear from './data/gear.json';
 import area from './data/regions.json';
 import fields from './data/fields.json';
+import descriptions from './data/descriptions.json';
 import selectionView from './views/selection/selection.js';
 import mapView from  './views/map/map.js';
 import sidebarView from  './views/sidebar/sidebar.js';
 import listContainer from './views/lists/lists.js';
 import sidebarStyles from './views/sidebar/styles.scss'; // should be unnecessary after refactor to constructor pattern
 import text from './front-text.md';
+import topText from './top-text.md';
 
-console.log(clusters);
+
 
 var fullAPI = (function(){
     var attributeOrder = ['species','gear','area'];  
@@ -24,26 +28,27 @@ var fullAPI = (function(){
             name: 'Fishery details',
             id: 'fisheries',
             data: fisheries,
-            fields: ['permits','degree','closeness_centrality','avg_edge_weight'],
+            fields: ['permits','degree','avg_edge_weight','closeness_centrality'],
             charts: []
         },
         {
             name: 'Cluster details',
             id: 'clusters',
             data: clusters,
-            fields: ['fisheries','avg_permits','density','avg_degree', 'avg_edge_weight_cluster', 'avg_closeness_centrality'],
+            fields: ['density','fisheries','avg_permits','avg_degree', 'avg_edge_weight_cluster', 'avg_closeness_centrality'],
             charts: [] 
         },
         {
             name: 'Network details',
             id: 'network',
             data: network,
-            fields: ['fisheries','avg_permits','density','avg_degree', 'avg_edge_weight', 'avg_closeness_centrality'] 
+            fields: ['density','fisheries','avg_permits','avg_degree', 'avg_edge_weight', 'avg_closeness_centrality'] 
         }
     ];
     var controller = {
         init(){
-            console.log(PS);
+            NodeListForEach();
+            arrayFind();
             PS.setSubs([
                 ['cluster', this.updateClusterDetails],
                 ['highlightConnected', this.highlightConnected],
@@ -70,6 +75,7 @@ var fullAPI = (function(){
             this.setNetworkDetails();
             views.listContainer = new listContainer('#fisheries-details',[{title:'Fisheries most connected to [selected]', id: 'relative'}]);
             views.mostAndLeastList = new listContainer('.map-container',[{title:'Most connected fisheries', id: 'most'},{title: 'Least connected fisheries', id: 'least'}], model.fisheries); 
+            this.addTopText();
             this.addFrontText();
         },
         scrollPositions: 0,
@@ -89,6 +95,9 @@ var fullAPI = (function(){
         },
         addFrontText(){
             document.querySelector('.main-column').insertAdjacentHTML('beforeend',text);
+        },
+        addTopText(){
+            document.querySelector('#app-container').insertAdjacentHTML('afterbegin',topText);
         },
         updateLists(msg,data){
             views.listContainer.children.forEach(list => {
@@ -239,11 +248,12 @@ var fullAPI = (function(){
             });
             function clickEnterHandler(){
                 var currentSelection = S.getState('selection');
-                if ( currentSelection && currentSelection[1] === this.dataset.name){ // is same node
+                var name = this.getAttribute('data-name');
+                if ( currentSelection && currentSelection[1] === name){ // is same node
                     S.setState('selection', null);
                     div.removeEventListener('click', mapClickHandler); // div = .map-container
                 } else {
-                    S.setState('selection', ['id',this.dataset.name]);
+                    S.setState('selection', ['id',name]);
                     div.addEventListener('click', mapClickHandler);
 
                 }
@@ -253,26 +263,10 @@ var fullAPI = (function(){
                 div.removeEventListener('click', mapClickHandler);
             }
             function activate(e){
+                var name = this.getAttribute('data-name');
                 e.stopPropagation();
                 clearTimeout(timeout);
-               // if (!S.getState('selection')) { // only allow mouseover  preview / depreview if nothing is selected
-                    S.setState('preview',['id',this.dataset.name]);
-               // }
-                /*if (e.type !== 'focus') {
-                    document.activeElement.blur();
-                } 
-                let circle = document.querySelector('circle.active');
-                console.log(circle);
-                if ( circle ) {
-                    deactivate.call(circle);
-                }
-                document.querySelectorAll('.nodes circle').forEach(function(each){
-                    each.classList.add('not-active');
-                });
-                this.classList.remove('not-active');
-                this.classList.add('active');
-                showLinks(this.dataset);
-                showDetails(this.dataset);*/
+                    S.setState('preview',['id', name]);
             }
             var timeout;
             function deactivate(e){
@@ -285,12 +279,6 @@ var fullAPI = (function(){
                         S.setState('preview', selection)   
                     }
                 }, 200);
-                /*document.querySelectorAll('.nodes circle').forEach(function(each){
-                    each.classList.remove('not-active');
-                });
-                this.classList.remove('active');
-                hideLinks(this.dataset);
-                hideDetails();*/
             }
         },
         highlightConnected(msg,data){
@@ -329,7 +317,7 @@ var fullAPI = (function(){
                 active.classList.remove('not-active');
                 active.classList.add(`${msg === 'selection' ? 'active' : !active.classList.contains('active') ? 'preview' : null}`);
                 if (msg ==='selection'){
-                    highlightLinkedNodes(active.dataset);
+                    highlightLinkedNodes(active.getAttribute('data-name'));
                 } else if (!active.classList.contains('active')) {
                     bars.classList.add('preview');
                 } else {
@@ -340,13 +328,14 @@ var fullAPI = (function(){
                 svg.classList.remove('activated')
                 
             }
-            function highlightLinkedNodes(d){
-                svg.querySelectorAll('line.' + d.name).forEach(l => {
+            function highlightLinkedNodes(name){
+                
+                svg.querySelectorAll('line.' + name).forEach(l => {
                     l.classList.add('active');
                     var attachedNodes = l.className.baseVal.match(/[A-Z]+-.*?-[^ ]+/g); // returns array of the two ids part of the line's classname
                     console.log(attachedNodes);
                     attachedNodes.forEach(ndId => {
-                        if ( ndId !== d.name ){
+                        if ( ndId !== name ){
                             let nd = svg.querySelector('circle[data-name="' + ndId + '"]');
                             if ( nd ) {
                                 nd.classList.remove('not-active');
@@ -363,9 +352,9 @@ var fullAPI = (function(){
                 console.log(activeNodes);
                 var activeClusters = [];
                 activeNodes.forEach(nd => {
-                    var index = activeClusters.indexOf(nd.dataset.cluster);
+                    var index = activeClusters.indexOf(nd.getAttribute('data-cluster'));
                     if ( index === -1 ){
-                        activeClusters.push(nd.dataset.cluster);
+                        activeClusters.push(nd.getAttribute('data-cluster'));
                     }
                 });
                 console.log(activeClusters);
@@ -382,8 +371,8 @@ var fullAPI = (function(){
                  var activeStatewide = svg.querySelectorAll('circle[data-area="Statewide"].active, circle[data-area="Statewide"].attached');
                  var activeStatewideClusters = [];
                  activeStatewide.forEach(nd => {
-                    if ( activeStatewideClusters.indexOf(nd.dataset.cluster) === -1 ){
-                        activeStatewideClusters.push(nd.dataset.cluster);
+                    if ( activeStatewideClusters.indexOf(nd.getAttribute('data-cluster')) === -1 ){
+                        activeStatewideClusters.push(nd.getAttribute('data-cluster'));
                     }
                  });
                  [1,2,3,4,5,6].forEach(c => {
@@ -433,7 +422,9 @@ var fullAPI = (function(){
             if ( data !== null ){
                 //var matchFn = sb.id === 'fisheries' ? x => x.id === data[1] : sb.id === 'clusters' ? x => x.id === model.fisheries.find(f => f.id === data[1]).cluster : () => true;
                 let matchFn = x => x.id === data[1];
-                div.classList.remove(sidebarStyles.notApplicable);
+                if ( msg === 'selection' ) {
+                    div.classList.remove(sidebarStyles.notApplicable);
+                }
                 let titleText = data[1].split('-').reduce((acc, cur, i) => {
                     return i === 0 ? model.dict[attributeOrder[i]][cur] : acc + ' — ' + model.dict[attributeOrder[i]][cur];
                 },'');
@@ -536,7 +527,8 @@ var fullAPI = (function(){
             species,
             gear,
             area,
-            fields
+            fields,
+            descriptions
         },
         matching: {
             fisheries

@@ -79,10 +79,20 @@ module.exports = {
             },
             {
                   test: /\.(html)$/,
+                  exclude: /legend\.html/,
                   use: {
                     loader: 'html-loader',
                     options: {
                       attrs: false
+                    }
+                  }
+            },
+            {
+                  test: /legend\.html/,
+                  use: {
+                    loader: 'html-es6-template-loader',
+                    query: {
+                        transpile: true
                     }
                   }
             },

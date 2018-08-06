@@ -150,7 +150,7 @@ List.prototype = {
         function setEventListeners(){
             console.log(S, this);
             this.list.querySelectorAll('li').forEach(item => {
-                item.addEventListener('mouseenter', setPreviewState);
+                item.addEventListener('mousemove', setPreviewState);
                 item.addEventListener('mouseleave', unsetPreviewState);
                 item.addEventListener('focus', setPreviewState);
                 item.addEventListener('blur', unsetPreviewState);

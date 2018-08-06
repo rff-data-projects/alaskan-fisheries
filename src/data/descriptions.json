@@ -1,0 +1,12 @@
+{
+  "permits":"The ten-year average number of permit holders (2006–2015).",
+  "degree":"The ten-year average number of direct connections with other fisheries. A direct connection is a shared permit holder. In network analysis, this is known as the degree of the node.",
+  "avg_edge_weight":"The ten-year average of the average number of permits shared with direct connections. In network analysis this is known as the average edge weight.",
+  "closeness_centrality":"This is a measure of connectivity beyond the first degree, known in network analysis as the closeness centrality. It is the inverse of the average distance between one node (a fishery) and all others it has a path of connection to. A node that has a way to connect to all others would have a closeness centrality of 1; a completely isolated node would have a closeness centrality of zero.",
+  "fisheries":"The number of fisheries in the network or cluster.",
+  "density": "Density is a measure of overall connectivity of a network of cluster. It is calculated by dividing the actual number connections by the number of possible connections. A highly connected network would approach 1; a disjointed network would approach zero.",
+  "avg_degree": "The average number of direct connections for the fisheries in the network or cluster. In network analysis this is known as the average degree.",
+  "avg_closeness_centrality": "The average closeness centrality for the fisheries in the network or cluster. Closeness centrality is a measure of connectivity beyond the first degree. It is the inverse of the average distance between one node (a fishery) and all others it has a path of connection to.",
+  "avg_permits":"The average of the ten-year average number of permit holders for the fisheries in the network or cluster.",
+  "avg_edge_weight_cluster":"The average of the average strength of direct connections for the fisheries in the network or cluster. The strength of each connection is equal to the number of shared permit holders. In network analysis this is known as the average edge weight."
+}

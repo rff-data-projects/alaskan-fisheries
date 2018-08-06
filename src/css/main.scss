@@ -34,7 +34,10 @@
   * {
       box-sizing: border-box;
     }
-  } 
+  }
+  p:first-child {
+    max-width: 860px;
+  }
 
 #dev-container {
   max-width:1200px;
@@ -56,7 +59,7 @@
  }
  .side-column {
     flex-grow:1;
-    width: 437px;
+    width: 440px;
     margin-top: 10px;
     border-left: 1px solid #d1d2d4;
     padding-left: 20px;
@@ -64,8 +67,10 @@
  }
 
  .landing-header {
-  margin-bottom: 0;
+  border-bottom: none;
  }
+
+
 
  /*
   *  other common
@@ -78,3 +83,19 @@
   .no-opacity {
     opacity: 0;
   }
+
+  /* browser specific */
+
+  /* IE 10 and 11 */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .map-container svg {
+   // height: 53%;
+  }
+  #app-container > p:first-child:before {
+    content: 'This feature looks and works better in browsers other than Internet Explorer and MS Edge';
+    position: absolute;
+    color: $red;
+    top: 0;
+    font-weight: bold;
+  }
+}

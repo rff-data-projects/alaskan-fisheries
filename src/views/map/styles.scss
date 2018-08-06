@@ -10,6 +10,7 @@
     }
     .nodes circle:not(.active):not(.attached){
       opacity:0;
+      pointer-events: none;
     }
   }
 
@@ -23,11 +24,12 @@
     &.below-threshold {
       display:none;
       &.active {
-        display:initial;
+        display:inline;
       }
     }
     &.active {
       opacity: 1;
+
     }
     &.cluster-1 {
       stroke: #30653a;

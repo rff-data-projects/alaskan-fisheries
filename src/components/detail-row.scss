@@ -1,3 +1,4 @@
+@import '../css/_variables.scss';
 .chartDiv {
   width: 200px;
   flex-grow: 1;
@@ -7,4 +8,24 @@
 
 .field-value {
     transition: opacity 0.25s linear;
+}
+
+.tippy-tooltip.RFF-theme {
+  background-color: rgba(#fff, 0.9);
+  border: 2px solid $blue;
+  color: $dark_gray;
+}
+
+.detail-row {
+    margin-left: -1em;
+    padding-left: 1em;
+    position: relative;
+    &:before {
+        position: absolute;
+        content: 'i';
+        font-style: italic;
+        left: 6px;
+        color: $a11y_gray;
+        font-size: 0.85em;
+    }
 }

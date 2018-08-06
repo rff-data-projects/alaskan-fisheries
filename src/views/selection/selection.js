@@ -5,9 +5,9 @@ export default {
         console.log(s);
         var div = document.createElement('div');
         div.className = `layout relative flex ${s.selectionDiv}`;
-        div.innerHTML = `<h2 class="${s.heading}">Select a fishery: </h2>`;
+        //div.innerHTML = `<h2 class="${s.heading}">Select a fishery: </h2>`;
         var selectors = document.createElement('div');
-        selectors.className = 'layout flex';
+        selectors.className = 'layout flex grow';
         selectors.setAttribute('id','selectors');
         selectors.innerHTML = `
             <div class="flex grow items-center layout ${s.selector}">

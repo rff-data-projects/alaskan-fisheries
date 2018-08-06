@@ -42,6 +42,10 @@
         span.field-value {
             opacity: 0.4;
         }
+        .listsContainer {
+            visibility: hidden;
+            pointer-events: none;
+        }
     }
     &.fisheries {
         h3, h4 {
