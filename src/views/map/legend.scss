@@ -32,5 +32,16 @@
     bottom: -4px;
     position: relative;
     margin-right: 3px;
+    position: relative;
+    &:after {
+        content: "";
+        position: absolute;
+        width: 77%;
+        height: 77%;
+        border: 1px solid #000;
+        border-radius: 50%;
+        left: 7.5%;
+        top: 7.5%;
+    }
 
 }

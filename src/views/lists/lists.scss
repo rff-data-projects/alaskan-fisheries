@@ -9,9 +9,11 @@
 
     ol {
         padding-left: 0;
-        max-width: 230px;
+        max-width: 260px;
         transition: opacity 0.25s linear;
         margin-bottom: 0;
+        height: 6.5em;
+        overflow-y: auto;
         &.hidden li {
             color: #bcbec0;
             span:first-child {
@@ -30,7 +32,7 @@
              > span {
                 display: inline-flex;
                 justify-content: space-between;
-                width:90%;
+                width:85%;
                 
             }
             &:hover {

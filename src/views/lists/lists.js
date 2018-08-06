@@ -83,13 +83,16 @@ List.prototype = {
                     }
                 }
             }*/
-            for ( let i = 0; i < 5; i++ ){
+            var x = matchingValues !== null ? matchingValues.length : 5;
+            for ( let i = 0; i < x; i++ ){
+                if ( data === null || matchingValues[i].value > 0 ){
                     let listItem = document.createElement('li');
                     listItem.setAttribute('tabindex', '0');
                     listItem.setAttribute('title','Click to select this fishery');
                     listItem.setAttribute('data-id', data !== null && matchingValues[i].value > 0 ? matchingValues[i].key : null);
                     listItem.innerHTML = `<span><span>${data !== null && matchingValues[i].value > 0 ? matchingValues[i].key : 'n.a.'}</span> <span>${data !== null && matchingValues[i].value > 0? '(' + matchingValues[i].value + ' shared permits)' : ''}</span></span>`;
                     temp.appendChild(listItem);
+                }
             }
             if ( fadeInText ) {
                 fadeInText(this.list,temp.innerHTML).then(() => {
@@ -120,7 +123,8 @@ List.prototype = {
                     }
                     return 0;
                 });
-                for ( let i = 0; i < 5; i++ ){
+                let x = this.config.id === 'most' ? Math.ceil(this.fisheries.length / 2) : Math.floor(this.fisheries.length / 2);
+                for ( let i = 0; i < x; i++ ){
                     let listItem = document.createElement('li');
                     listItem.setAttribute('tabindex', '0');
                     listItem.setAttribute('title','Click to select this fishery');
