@@ -1,1 +1,0 @@
-One hundred thirteen Alaskan fisheries and their connections to each other are represented in the map below. Preview their details by hovering over the circles on the map or items in the two scrollable lists below it. For full details, click the circles or list items to select a fishery, or use the dropdown selectors.

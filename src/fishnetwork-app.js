@@ -16,9 +16,6 @@ import mapView from  './views/map/map.js';
 import sidebarView from  './views/sidebar/sidebar.js';
 import listContainer from './views/lists/lists.js';
 import sidebarStyles from './views/sidebar/styles.scss'; // should be unnecessary after refactor to constructor pattern
-import text from './front-text.md';
-import topText from './top-text.md';
-
 
 
 var fullAPI = (function(){
@@ -75,8 +72,7 @@ var fullAPI = (function(){
             this.setNetworkDetails();
             views.listContainer = new listContainer('#fisheries-details',[{title:'Fisheries most connected to [selected]', id: 'relative'}]);
             views.mostAndLeastList = new listContainer('.map-container',[{title:'Most connected fisheries', id: 'most'},{title: 'Least connected fisheries', id: 'least'}], model.fisheries); 
-            this.addTopText();
-            this.addFrontText();
+           
         },
         scrollPositions: 0,
         createScrollWatcher(){
@@ -92,12 +88,6 @@ var fullAPI = (function(){
                     console.log(controller.scrollPosition);
                 },250);
             }
-        },
-        addFrontText(){
-            document.querySelector('.main-column').insertAdjacentHTML('beforeend',text);
-        },
-        addTopText(){
-            document.querySelector('#app-container').insertAdjacentHTML('afterbegin',topText);
         },
         updateLists(msg,data){
             views.listContainer.children.forEach(list => {
