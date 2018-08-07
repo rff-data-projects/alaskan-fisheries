@@ -71,7 +71,7 @@ var fullAPI = (function(){
             });
             this.setNetworkDetails();
             views.listContainer = new listContainer('#fisheries-details',[{title:'Fisheries most connected to [selected]', id: 'relative'}]);
-            views.mostAndLeastList = new listContainer('.map-container',[{title:'Most connected fisheries', id: 'most'},{title: 'Least connected fisheries', id: 'least'}], model.fisheries); 
+            views.mostAndLeastList = new listContainer('.map-container',[{title:'Most closely connected fisheries', id: 'most'},{title: 'Least closely connected fisheries', id: 'least'}], model.fisheries); 
            
         },
         scrollPositions: 0,
