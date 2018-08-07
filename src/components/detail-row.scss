@@ -2,7 +2,7 @@
 .chartDiv {
   width: 200px;
   flex-grow: 1;
-  max-width: 200px;
+  max-width: 192px;
   height: 25px;
 }
 
@@ -14,18 +14,4 @@
   background-color: rgba(#fff, 0.9);
   border: 2px solid $blue;
   color: $dark_gray;
-}
-
-.detail-row {
-    margin-left: -1em;
-    padding-left: 1em;
-    position: relative;
-    &:before {
-        position: absolute;
-        content: 'i';
-        font-style: italic;
-        left: 6px;
-        color: $a11y_gray;
-        font-size: 0.85em;
-    }
 }

@@ -3,7 +3,7 @@ import BarChart from './bar-chart.js';
 import tippy from 'tippy.js';
 export default function(sidebar, field){ // called with `this` = model
     var row = document.createElement('div');
-    row.className = 'detail-row flex space-between field-' + field;
+    row.className = 'info-mark detail-row flex space-between field-' + field;
 
     var labelDiv = document.createElement('div');
     labelDiv.setAttribute('title', this.dict.descriptions[field]);

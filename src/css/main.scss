@@ -70,6 +70,19 @@
   border-bottom: none;
  }
 
+.info-mark {
+  margin-left: -1em;
+  padding-left: 1em;
+  position: relative;
+  &:before {
+        position: absolute;
+        content: 'i';
+        font-style: italic;
+        left: 6px;
+        color: $a11y_gray;
+        font-size: 0.85em;
+    }
+}
 
 
  /*

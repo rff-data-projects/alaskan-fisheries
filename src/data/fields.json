@@ -2,11 +2,12 @@
     "permits":"Permit holders",
     "degree":"Number of connections",
     "avg_edge_weight":"Strength of connections",
-    "closeness_centrality":"Proximity to others",
+    "closeness_centrality":"Closeness to others",
     "fisheries":"Fisheries",
     "density": "Density",
     "avg_degree": "Avg. no. of connections",
-    "avg_closeness_centrality": "Avg. proximity to others",
+    "avg_closeness_centrality": "Avg. closeness to others",
     "avg_permits":"Avg. permits per fishery",
     "avg_edge_weight_cluster":"Avg. connection strength"
+
 }

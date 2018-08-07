@@ -2,6 +2,8 @@
 import s from './lists.scss';
 import adjacency from '../../data/adjacency-matrix.csv';
 import { stateModule as S } from 'stateful-dead';
+import descriptions from './../../data/descriptions.json';
+import tippy from 'tippy.js';
 
 var keyedAdjacency = adjacency.map(each => {
     var values = [];
@@ -52,7 +54,15 @@ List.prototype = {
         var div = document.createElement('div');
         div.className = s.listView;
         var opacity = this.config.id === 'relative' ? 'no-opacity' : '';
-        div.innerHTML = '<p class="' + opacity + '">' + this.config.title + '</p>';
+        div.innerHTML = '<p class="' + opacity +  (this.config.id === 'relative' ? '' : ' info-mark') +'">' + this.config.title + '</p>';
+        if ( this.config.id !== 'relative' ){
+            div.setAttribute('title', descriptions[this.config.id]);
+            div.setAttribute('tabindex', 0);
+            tippy(div, {
+                theme: 'RFF',
+                arrow: true
+            });
+        }
         this.list = document.createElement('ol');
         div.appendChild(this.list)
         this.container = div;
@@ -85,7 +95,10 @@ List.prototype = {
             }*/
             var x = matchingValues !== null ? matchingValues.length : 5;
             for ( let i = 0; i < x; i++ ){
-                if ( data === null || matchingValues[i].value > 0 ){
+                if ( data !== null && i === 0 && matchingValues[i].value === 0 ) {
+                    let text = 'None';
+                    temp.innerHTML = text;
+                } else if ( data === null || matchingValues[i].value > 0 ){
                     let listItem = document.createElement('li');
                     listItem.setAttribute('tabindex', '0');
                     listItem.setAttribute('title','Click to select this fishery');
@@ -115,10 +128,10 @@ List.prototype = {
                 let temp = document.createElement('div');
                 this.fisheries.sort((a,b) => {
                     //console.log(a,b,this);
-                    if ( a.degree > b.degree ){
+                    if ( a.closeness_centrality > b.closeness_centrality ){
                         return this.config.id === 'most' ? -1 : 1;
                     }
-                    if ( b.degree > a.degree ){
+                    if ( b.closeness_centrality > a.closeness_centrality ){
                         return this.config.id === 'most' ? 1 : -1;
                     }
                     return 0;
@@ -147,6 +160,15 @@ List.prototype = {
                 S.setState('preview', selection)   
             }
         }
+        function clickHandler(){
+            var selection = S.getState('selection');
+            console.log(selection);
+            if ( !selection || selection[1] !== this.dataset.id ) { 
+                S.setState('selection', ['id',this.dataset.id]);
+            } else {
+                S.setState('selection', null)   
+            }
+        }
         function setEventListeners(){
             console.log(S, this);
             this.list.querySelectorAll('li').forEach(item => {
@@ -154,13 +176,10 @@ List.prototype = {
                 item.addEventListener('mouseleave', unsetPreviewState);
                 item.addEventListener('focus', setPreviewState);
                 item.addEventListener('blur', unsetPreviewState);
-                item.addEventListener('click', function(){
-                    var selection = S.getState('selection');
-                    console.log(selection);
-                    if ( !selection || selection[1] !== this.dataset.id ) { 
-                        S.setState('selection', ['id',this.dataset.id]);
-                    } else {
-                        S.setState('selection', null)   
+                item.addEventListener('click', clickHandler);
+                item.addEventListener('keyup', function(e){
+                    if ( e.keyCode === 13 ){
+                        clickHandler.call(this);
                     }
                 });
             });
