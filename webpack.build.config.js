@@ -4,18 +4,20 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+
 
 const scssSharedLoaders = [{ // defining array of css loaders here to avoid duplication below
 		loader: MiniCssExtractPlugin.loader,
 	},{
 		loader: 'postcss-loader',
 		options: {
-			sourceMap: true
+			sourceMap: false
 		}
 	},{
 		loader: 'sass-loader',
 		options: {
-			sourceMap: true
+			sourceMap: false
 		}
 }];
 
@@ -23,7 +25,6 @@ module.exports = {
 	entry: {
       	'js/index': './src/index.js'
     },
-    devtool: 'inline-source-map', // may be too slow an option; set to another if so
     mode: 'production',
     module: {
     	rules: [  // the only difference now bt excluded and nonexcluded is that exc files are not being loaded as modules
@@ -40,7 +41,7 @@ module.exports = {
                         options: {
                             modules: true,
                             localIdentName: '[local]',
-                            sourceMap: true,
+                            sourceMap: false,
                             minimize: true,
                             importLoaders: 1 
                     }
@@ -56,7 +57,7 @@ module.exports = {
                     {
                         loader: 'css-loader',
                         options: {
-                            sourceMap: true,
+                            sourceMap: false,
                             minimize: true,
                             importLoaders: 1        
                         }
@@ -112,6 +113,20 @@ module.exports = {
             }
         ]
    },
+   optimization: {
+      minimizer: [
+        new UglifyJSPlugin({
+          uglifyOptions: {
+            compress: {
+              drop_console: true
+            },
+            output: {
+              comments: false
+            }
+          },
+        }),
+      ],
+    },
     plugins: [
     	new CleanWebpackPlugin(['dist']),
     	new HtmlWebpackPlugin({

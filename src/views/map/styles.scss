@@ -2,8 +2,15 @@
 .map-container {
     margin-top: 20px;
     margin-bottom:20px;
+.map-wrapper {
+  position: relative;
+  height: 0;
+  width: 100%;
+  padding-bottom: 53%;
 
+}
  svg {
+  position: absolute;
   &.activated {
     .links line:not(.active){
       display:none;

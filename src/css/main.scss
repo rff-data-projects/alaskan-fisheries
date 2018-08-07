@@ -30,6 +30,7 @@
  */
 
 #app-container {
+  position: relative;
   margin-bottom: 40px;
   * {
       box-sizing: border-box;
@@ -101,14 +102,10 @@
 
   /* IE 10 and 11 */
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-  .map-container svg {
-   // height: 53%;
-  }
-  #app-container > p:first-child:before {
+  
+  #app-container:before {
     content: 'This feature looks and works better in browsers other than Internet Explorer and MS Edge';
-    position: absolute;
     color: $red;
-    top: 0;
     font-weight: bold;
   }
 }

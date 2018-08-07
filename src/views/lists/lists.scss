@@ -9,11 +9,15 @@
 
     ol {
         padding-left: 0;
-        max-width: 260px;
+        max-width: 350px;
+        width:100%;
         transition: opacity 0.25s linear;
         margin-bottom: 0;
         height: 6.5em;
         overflow-y: auto;
+        .map-container & {
+            height: 13em;
+        }
         &.hidden li {
             color: #bcbec0;
             span:first-child {
@@ -49,6 +53,9 @@
 .listsContainer {
     display: flex;
     margin-top: 20px;
+    .map-container & {
+        margin-top: 40px;
+    }
 }
 .relativeTo {
     transition: opacity 0.25s linear;

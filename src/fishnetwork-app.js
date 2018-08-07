@@ -219,7 +219,7 @@ var fullAPI = (function(){
         },
         mapViewOnRender(div){
 
-
+            var wrapper = div.querySelector('.map-wrapper');
             div.querySelectorAll('circle').forEach(c => {
                 c.addEventListener('mouseenter', activate);
                 c.addEventListener('mouseleave', deactivate);
@@ -241,16 +241,16 @@ var fullAPI = (function(){
                 var name = this.getAttribute('data-name');
                 if ( currentSelection && currentSelection[1] === name){ // is same node
                     S.setState('selection', null);
-                    div.removeEventListener('click', mapClickHandler); // div = .map-container
+                    wrapper.removeEventListener('click', mapClickHandler); // div = .map-container
                 } else {
                     S.setState('selection', ['id',name]);
-                    div.addEventListener('click', mapClickHandler);
+                    wrapper.addEventListener('click', mapClickHandler);
 
                 }
             }
             function mapClickHandler(){
                 S.setState('selection', null);
-                div.removeEventListener('click', mapClickHandler);
+                wrapper.removeEventListener('click', mapClickHandler);
             }
             function activate(e){
                 var name = this.getAttribute('data-name');
