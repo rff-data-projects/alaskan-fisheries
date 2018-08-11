@@ -3,7 +3,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 
@@ -139,11 +138,7 @@ module.exports = {
 	      // both options are optional
 	      filename: "css/styles.css",
 	      chunkFilename: "[id].css",
-	    }),
-        new CopyWebpackPlugin([{
-            from: 'data/*.*',
-            context: 'src'
-        }])
+	    })
     ],
   	output: {
     	filename: '[name].js',

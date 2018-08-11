@@ -3,7 +3,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const scssSharedLoaders = [{ // defining array of css loaders here to avoid duplication below
         loader: MiniCssExtractPlugin.loader,
@@ -116,10 +115,6 @@ module.exports = {
           filename: "css/styles.css",
           chunkFilename: "[id].css",
         }),
-        new CopyWebpackPlugin([{
-            from: 'data/*.*',
-            context: 'src'
-        }]),
     	new webpack.HotModuleReplacementPlugin()
     ],
   	output: {
