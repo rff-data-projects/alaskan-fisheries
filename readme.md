@@ -12,6 +12,10 @@ This research is described further in the peer-reviewed journal article ["Identi
 
 This feature is written in framework-less ES6 JavaScript compiled and transpiled through Webpack. It uses D3 for the data viz; the map itself was prerendered through a separate D3-based standalone project.
 
+**The Data**
+
+The data underlying the map, bar charts, and the most and least connected lists comes from data/fisheries-sorted-csv; data for the list showing fisheries most connected to the select fishery comes from data/adjacency-matrix.csv. Cluster data is in clusters.csv; network in network.csv. Regions.csv, network.csv, and species.csv are dictionaries to decode the fishery codes. Tooltip descriptions are in  descriptions.json.
+
 ## To edit
 
 1. [Install npm](https://www.npmjs.com/get-npm)
@@ -25,6 +29,6 @@ This feature is written in framework-less ES6 JavaScript compiled and transpiled
 1. The live code exists inline in the body of a page on RFF's site
 1. To edit the live page, cut and paste css/styles.css and js,index.js and the relevant bits of index.html into the right places in the content body. Existing page content is commented to make this clear.
 
-The app works on its own but is not fully designed until it is part of an RFF page. Global changes to the website will affect the display of this app.
+The app works on its own but is not fully designed until it is part of an RFF page. Global changes to the website will affect the display of this app, that is, the design relies on global CSS. 
 
 **Note that the page's layout has been changed from two-column default to single-column**
